@@ -4,8 +4,7 @@ var http = require('http');
 var https = require('https');
 var ClientResponse = require('./client_response.js');
 var querystring = require('querystring');
-var noop = function () {
-};
+var _ = require('lodash');
 
 function extend(target) {
     var sources = [].slice.call(arguments, 1);
@@ -19,8 +18,13 @@ function extend(target) {
 
 module.exports = class Client {
     constructor(baseUrl, options) {
-        options = options || {};
-        this.headers = options.headers || {};
+        // Setup Headers
+        this.headers = {};
+        this.headers["Content-Type"] = 'application/vnd.api+json';
+        this.headers["Accept"] = 'application/vnd.api+json';
+        _.extend(this.headers, options.headers || {});
+
+        // Setup Client
         var parsedUrl = url.parse(baseUrl);
 
         if (process.env.http_proxy) {
