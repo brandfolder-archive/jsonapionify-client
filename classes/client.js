@@ -118,6 +118,13 @@ module.exports = class Client {
                     path: path,
                     headers: headers
                 }, function (res) {
+                    var statusCode = res.statusCode;
+                    var headers = res.headers;
+                    if (statusCode > 300 && statusCode < 304 && headers['location']) {
+                        client.request(method, headers['location'], data, params, options).then(resolve).catch(reject);
+                        return;
+                    }
+
                     // Create the response
                     var response = new ClientResponse(res);
 

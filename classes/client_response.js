@@ -4,7 +4,7 @@ var Instance = require('./instance.js');
 
 module.exports = class ClientResponse {
     constructor(response) {
-        this.status = response.status;
+        this.status = response.statusCode;
         this.headers = response.headers;
         this.body = '';
     }
