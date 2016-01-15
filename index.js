@@ -11,4 +11,4 @@ module.exports = class JSONAPIonify {
     resource(name) {
         return new Resource(name, this.client);
     }
-}
+};
