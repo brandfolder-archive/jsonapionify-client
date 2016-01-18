@@ -25,6 +25,7 @@ module.exports = class Client {
         _.extend(this.headers, options.headers || {});
 
         // Setup Client
+        this.baseUrl = baseUrl;
         var parsedUrl = url.parse(baseUrl);
 
         if (process.env.http_proxy) {
@@ -66,6 +67,7 @@ module.exports = class Client {
                 this.agent = http;
                 break;
         }
+        this.beforeRequestFn = _.noop
     }
 
     get(path, params, options) {
@@ -88,10 +90,28 @@ module.exports = class Client {
         return this.request('DELETE', path, undefined, params, options);
     }
 
+    beforeRequest(fn) {
+        var prevBeforeRequestFunction = this.beforeRequestFn;
+        this.beforeRequestFn = function(){
+            prevBeforeRequestFunction.apply(this, arguments);
+            fn.apply(this, arguments)
+        }
+    };
+
     request(method, path, data, params, options) {
+        var beforeRequestFn = this.beforeRequestFn || _.noop;
         var client = this;
         options = options || {};
+        method = method.toUpperCase();
         var headers = extend({}, this.headers, options.headers);
+
+        if (params) {
+            path += `${path.match(/\?/) ? '&' : '?'}${querystring.stringify(params)}`;
+        }
+
+        var url = [client.baseUrl, path].map(function (string) {
+            return string.replace(/\/$/, '');
+        }).join('/');
 
         if (data) {
             var body = JSON.stringify(data);
@@ -104,15 +124,13 @@ module.exports = class Client {
             }).join('/');
         }
 
-        if (params) {
-            path += `${path.match(/\?/) ? '&' : '?'}${querystring.stringify(params)}`;
-        }
+        beforeRequestFn(method, url, headers, body);
 
         return new Promise(
             function (resolve, reject) {
                 // Create a Request
                 var request = client.agent.request({
-                    method: method.toUpperCase(),
+                    method: method,
                     hostname: client.hostname,
                     port: client.port,
                     path: path,

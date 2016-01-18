@@ -10,4 +10,8 @@ module.exports = class JSONAPIonify {
     resource(name) {
         return new Resource(name, this.client);
     }
-}
+
+    beforeRequest(fn){
+        this.client.beforeRequest(fn)
+    }
+};
