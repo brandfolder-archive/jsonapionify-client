@@ -4,7 +4,7 @@ var Instance = require('./instance.js');
 var Collection = require('./collection.js');
 
 module.exports = class Resource {
-    constructor(name, client) {
+    constructor(data, client) {
         this.name = name;
         this.client = client;
     }

@@ -8,6 +8,7 @@ module.exports = class Collection extends Array {
         var collection = this;
         var data = responseJson.data || [];
 
+        this.responseJson = responseJson;
         this.client = client;
         this.links = responseJson.links;
         this.meta = responseJson.meta;
