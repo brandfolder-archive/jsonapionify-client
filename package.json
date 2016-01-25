@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "The client-side ",
   "main": "index.js",
+  "license": "UNLICENSED",
+  "repository": "https://github.com/brandfolder/jsonapionify-client.git",
   "dependencies": {
     "babel": "^5.8.34",
     "es6-promise": "^3.0.2",
