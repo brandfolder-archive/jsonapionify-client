@@ -56,9 +56,14 @@ module.exports = class Client {
         }
 
         // Build the URL
-        var url = [this.baseUrl, path].map(function (string) {
-            return string.replace(/\/$/, '');
-        }).join('/');
+        if (path.indexOf(this.baseUrl) !== -1){
+            var url = path;
+        } else {
+            var url = [this.baseUrl, path].map(function (string) {
+                return string.replace(/\/$/, '');
+            }).join('/');
+        }
+
 
         // Build the options
         options = {
