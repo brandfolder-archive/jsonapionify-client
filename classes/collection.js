@@ -40,4 +40,10 @@ module.exports = class Collection extends Array {
             return new Instance(response.json.data, instance.client)
         })
     }
+
+    options(){
+        return processResponse(this.client.options(this.name), function(response){
+            return response;
+        });
+    }
 };

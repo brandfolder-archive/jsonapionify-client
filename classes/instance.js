@@ -116,4 +116,11 @@ module.exports = class Instance {
             });
         });
     }
+
+    options(){
+        var instance = this;
+        return processResponse(instance.client.options(instance.name), function(response){
+            return response;
+        });
+    }
 };

@@ -27,4 +27,9 @@ module.exports = class Resource {
             return new Instance(response.json.data, resource.client);
         });
     }
+    options(){
+        return processResponse(this.client.options(this.name), function(response){
+            return response;
+        });
+    }
 };

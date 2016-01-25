@@ -34,7 +34,7 @@ api.beforeRequest(function (method, path, headers, body) {
     headers['x-signature'] = crypto.createHmac('sha256', process.env.BRANDFOLDER_API_SHARED_SECRET || 'NONE').update(sig_document).digest('hex');
 });
 
-function () {
+function start () {
 // Full workflow in Brandfolder
 // 1. Create Brandfolder
 // 2. Create Section in Created Brandfolder
@@ -72,3 +72,5 @@ function () {
         })
     });
 };
+
+start();
