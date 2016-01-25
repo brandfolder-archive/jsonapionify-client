@@ -15,26 +15,15 @@ _.mixin({
     }
 });
 
-var opts = {};
+var opts = { headers: {} };
 if (process.env.BRANDFOLDER_API_KEY) {
     opts.headers.Authorization = `JWT ${process.env.BRANDFOLDER_API_KEY}`;
 }
 var api = new JSONAPIonify(process.env.BRANDFOLDER_ENDPOINT || "https://api.brandfolder.com/v2", opts);
-api.beforeRequest(function (method, path, headers, body) {
-    var sig_document = JSON.stringify({
-        request_method: method,
-        url: path,
-        headers: _.sortKeysBy(_.reduce(headers, (result, value, key) => {
-            result[key.toLowerCase()] = value;
-            return result
-        }, {})),
-        body: body || ""
-    });
-    console.log(sig_document);
-    headers['x-signature'] = crypto.createHmac('sha256', process.env.BRANDFOLDER_API_SHARED_SECRET || 'NONE').update(sig_document).digest('hex');
-});
 
-function () {
+api.resource('organizations').index().then(console.log);
+
+var a = (function () {
 // Full workflow in Brandfolder
 // 1. Create Brandfolder
 // 2. Create Section in Created Brandfolder
@@ -70,5 +59,5 @@ function () {
                 })
             })
         })
-    });
-};
+    })
+});

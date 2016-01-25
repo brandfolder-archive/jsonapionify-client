@@ -1,4 +1,8 @@
 "use strict";
+
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
+
 var url = require('url');
 var http = require('http');
 var https = require('https');
@@ -6,68 +10,17 @@ var ClientResponse = require('./client_response.js');
 var querystring = require('querystring');
 var _ = require('lodash');
 
-function extend(target) {
-    var sources = [].slice.call(arguments, 1);
-    sources.forEach(function (source) {
-        for (var prop in source) {
-            target[prop] = source[prop];
-        }
-    });
-    return target;
-}
-
 module.exports = class Client {
     constructor(baseUrl, options) {
         // Setup Headers
+        options = options || {};
         this.headers = {};
         this.headers["Content-Type"] = 'application/vnd.api+json';
         this.headers["Accept"] = 'application/vnd.api+json';
         _.extend(this.headers, options.headers || {});
 
-        // Setup Client
+        // Set baseUrl
         this.baseUrl = baseUrl;
-        var parsedUrl = url.parse(baseUrl);
-
-        if (process.env.http_proxy) {
-            var parsedProxyUrl = url.parse(process.env.http_proxy);
-            this.protocol = 'proxy';
-            this.headers['Host'] = parsedUrl.hostname;
-            this.host = parsedProxyUrl.host;
-            this.port = parsedProxyUrl.port;
-            this.path = parsedUrl.href;
-            switch (parsedUrl.protocol.slice(0, -1)) {
-                case 'http':
-                    if (parsedUrl.port != 80) {
-                        this.headers['Host'] += `:${parsedUrl.port}`
-                    }
-                    break;
-                case 'https':
-                    if (parsedUrl.port != 443) {
-                        this.headers['Host'] += `:${parsedUrl.port}`
-                    }
-                    break;
-            }
-        } else {
-            this.protocol = parsedUrl.protocol.slice(0, -1);
-            this.port = parsedUrl.port;
-            this.hostname = parsedUrl.hostname;
-            this.path = parsedUrl.pathname;
-        }
-
-        switch (this.protocol) {
-            case 'http':
-                this.agent = http;
-                this.port = this.port || 80;
-                break;
-            case 'https':
-                this.agent = https;
-                this.port = this.port || 443;
-                break;
-            case 'proxy':
-                this.agent = http;
-                break;
-        }
-        this.beforeRequestFn = _.noop
     }
 
     get(path, params, options) {
@@ -90,87 +43,39 @@ module.exports = class Client {
         return this.request('DELETE', path, undefined, params, options);
     }
 
-    beforeRequest(fn) {
-        var prevBeforeRequestFunction = this.beforeRequestFn;
-        this.beforeRequestFn = function(){
-            prevBeforeRequestFunction.apply(this, arguments);
-            fn.apply(this, arguments)
-        }
-    };
+    options(path, params, options) {
+        return this.request('OPTIONS', path, undefined, params, options);
+    }
 
     request(method, path, data, params, options) {
-        var beforeRequestFn = this.beforeRequestFn || _.noop;
-        var client = this;
-        options = options || {};
-        method = method.toUpperCase();
-        var headers = extend({}, this.headers, options.headers);
+        path = path || '';
 
+        // Append params
         if (params) {
             path += `${path.match(/\?/) ? '&' : '?'}${querystring.stringify(params)}`;
         }
 
-        var url = [client.baseUrl, path].map(function (string) {
+        // Build the URL
+        var url = [this.baseUrl, path].map(function (string) {
             return string.replace(/\/$/, '');
         }).join('/');
 
+        // Build the options
+        options = {
+            method: method,
+            headers: this.headers
+        };
+
         if (data) {
-            var body = JSON.stringify(data);
-            headers['Content-Length'] = Buffer.byteLength(body, 'utf8');
+            options.body = JSON.stringify(data)
         }
 
-        if (!path.match(/^https?:\/\//)) {
-            path = [client.path, path].map(function (string) {
-                return string.replace(/\/$/, '');
-            }).join('/');
-        }
-
-        beforeRequestFn(method, url, headers, body);
-
-        return new Promise(
-            function (resolve, reject) {
-                // Create a Request
-                var request = client.agent.request({
-                    method: method,
-                    hostname: client.hostname,
-                    port: client.port,
-                    path: path,
-                    headers: headers
-                }, function (res) {
-                    var statusCode = res.statusCode;
-                    var headers = res.headers;
-                    if (statusCode > 300 && statusCode < 304 && headers['location']) {
-                        client.request(method, headers['location'], data, params, options).then(resolve).catch(reject);
-                        return;
-                    }
-
-                    // Create the response
-                    var response = new ClientResponse(res);
-
-                    // Append to body on new chunk
-                    res.on('data', function (chunk) {
-                        response.append(chunk);
-                    });
-
-                    // Resolve when finished
-                    res.on('end', function () {
-                        response.finish();
-                        resolve(response);
-                    });
-                });
-
-                // Reject Errors
-                request.on('error', function (e) {
-                    reject(e);
-                });
-
-                // Write Data
-                if (data) {
-                    request.write(body);
-                }
-
-                // End the request
-                request.end();
-            }
-        );
+        return new Promise(function (resolve, reject) {
+            fetch(url, options).then(function (response) {
+                response.text().then(function (body) {
+                    resolve(new ClientResponse(response, body));
+                }).catch(reject)
+            }).catch(reject);
+        })
     }
 };

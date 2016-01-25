@@ -102,7 +102,8 @@ module.exports = class Instance {
 
     save(params) {
         var instance = this;
-        return processResponse(instance.client.patch(instance.data.links['self'], {data: instance.data}, params), function (response) {
+        var request = instance.client.patch(instance.data.links['self'], {data: instance.data}, params);
+        return processResponse(request, function (response) {
             instance.data = response.json.data;
             return instance;
         });
@@ -110,10 +111,17 @@ module.exports = class Instance {
 
     delete(params) {
         var instance = this;
-        return new Promise(function (resolve) {
-            processResponse(instance.client.delete(instance.data.links['self'], params), function (response) {
-                resolve(response);
-            });
+        var request = instance.client.delete(instance.data.links['self'], params);
+        return processResponse(request, function (response) {
+            resolve(response);
         });
+    }
+
+    options(params) {
+        var instance = this;
+        var request = instance.client.options(instance.links['self'], params);
+        return processResponse(request, function (response) {
+            return response
+        })
     }
 };

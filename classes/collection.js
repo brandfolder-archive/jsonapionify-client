@@ -40,4 +40,12 @@ module.exports = class Collection extends Array {
             return new Instance(response.json.data, instance.client)
         })
     }
+
+    options(params){
+        var instance = this;
+        var request = this.client.options(this.links['self'], params);
+        return processResponse(request, function (response) {
+            return new Instance(response.json.data, instance.client)
+        })
+    }
 };
