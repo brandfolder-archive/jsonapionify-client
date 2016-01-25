@@ -19,7 +19,7 @@ var opts = { headers: {} };
 if (process.env.BRANDFOLDER_API_KEY) {
     opts.headers.Authorization = `JWT ${process.env.BRANDFOLDER_API_KEY}`;
 }
-var api = new JSONAPIonify(process.env.BRANDFOLDER_ENDPOINT || "http://api.lvh.me:3000/v2", opts);
+var api = new JSONAPIonify(process.env.BRANDFOLDER_ENDPOINT || "https://api.brandfolder.com/v2", opts);
 
 
 var a = (function () {
@@ -30,11 +30,8 @@ var a = (function () {
 // 4. Create 15 Assets in Created Section
 // 5. Upload 1 Attachment per Created Asset
     api.resource('organizations').index().then(function (organizations) {
-        organizations.options().then(function(response){debugger;});
         organizations.first().related('brandfolders').then(function (brandfolders) {
-            brandfolders.options().then(function(response){debugger});
             brandfolders.create('brandfolders', {name: 'Lots of Cats'}).then(function (brandfolder) {
-                brandfolder.options().then(function(response){debugger});
                 brandfolder.related('sections').then(function (sections) {
                     sections.forEach(function (section) {
                         section.delete()
@@ -61,4 +58,3 @@ var a = (function () {
         })
     })
 });
-
