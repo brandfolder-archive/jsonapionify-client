@@ -13,7 +13,6 @@ module.exports = class Resource {
         var resource = this;
         return processResponse(this.client.get(this.name, params), function (response) {
             return new Collection(response.json, resource.client);
-
         });
     }
 

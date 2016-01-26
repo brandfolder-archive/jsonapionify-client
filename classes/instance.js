@@ -119,7 +119,7 @@ module.exports = class Instance {
 
     options(params) {
         var instance = this;
-        var request = instance.client.options(instance.links['self'], params);
+        var request = instance.client.options(instance.link('self'), params);
         return processResponse(request, function (response) {
             return response
         })
