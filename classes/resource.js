@@ -1,5 +1,5 @@
 "use strict";
-var processResponse = require('../helpers/process-response.js');
+var processResponse = require('../helpers/process_response.js');
 var Instance = require('./instance.js');
 var Collection = require('./collection.js');
 

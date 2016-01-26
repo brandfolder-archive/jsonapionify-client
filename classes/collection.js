@@ -1,6 +1,6 @@
 "use strict";
 var Instance = require('./instance.js');
-var processResponse = require('../helpers/process-response.js');
+var processResponse = require('../helpers/process_response.js');
 
 module.exports = class Collection extends Array {
     constructor(responseJson, client) {
