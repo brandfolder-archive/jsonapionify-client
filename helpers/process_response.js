@@ -1,17 +1,16 @@
-"use strict"
+"use strict";
 
-module.exports = function processResponse(promise, callback) {
-    callback = callback || noop;
+const _ = require('lodash');
+
+module.exports = function processResponse(response) {
     return new Promise(function (resolve, reject) {
-        promise.then(function (response) {
-            if (response.json.errors) {
-                reject(response.json.errors, response);
-            } else {
-                var callback_result = callback(response);
-                resolve(callback_result, response);
-            }
-        }).catch(function (reason) {
-            throw reason;
-        });
+        if (response.json && response.json.errors) {
+            var message = response.json.errors.map(function (error) {
+                return _.compact([error.status, error.title, ':', error.detail]).join(' ')
+            }).join(', ');
+            reject(new Error(message), response);
+        } else {
+            resolve(response);
+        }
     });
-}
+};

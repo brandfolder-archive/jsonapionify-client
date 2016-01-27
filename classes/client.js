@@ -49,6 +49,7 @@ module.exports = class Client {
 
     request(method, path, data, params, options) {
         path = path || '';
+        var requestUrl;
 
         // Append params
         if (params) {
@@ -56,14 +57,15 @@ module.exports = class Client {
         }
 
         // Build the URL
-        if (path.indexOf(this.baseUrl) !== -1){
-            var url = path;
+        if (url.parse(path).host) {
+            requestUrl = path;
+        } else if (path.indexOf(this.baseUrl) !== -1) {
+            requestUrl = path;
         } else {
-            var url = [this.baseUrl, path].map(function (string) {
+            requestUrl = [this.baseUrl, path].map(function (string) {
                 return string.replace(/\/$/, '');
             }).join('/');
         }
-
 
         // Build the options
         options = {
@@ -75,12 +77,14 @@ module.exports = class Client {
             options.body = JSON.stringify(data)
         }
 
-        return new Promise(function (resolve, reject) {
-            fetch(url, options).then(function (response) {
-                response.text().then(function (body) {
-                    resolve(new ClientResponse(response, body));
-                }).catch(reject)
-            }).catch(reject);
+        var response;
+
+        return fetch(requestUrl, options).then(function (res) {
+            response = new ClientResponse(res);
+            return res.text()
+        }).then(function (body) {
+            response.setBody(body);
+            return response;
         })
     }
 };
