@@ -82,11 +82,10 @@ module.exports = class Instance {
 
     relationship(name) {
         var instance = this;
-
         return instance.relationship_data(name).then(processResponse).then(function (response) {
-            return instance.client.get(data.links['self'])
+            return instance.client.get(response.links['self'])
         }).then(processResponse).then(function (response) {
-            oneOrManyRelationship(response, instance)
+            return oneOrManyRelationship(response, instance)
         });
     }
 
@@ -114,7 +113,7 @@ module.exports = class Instance {
     }
 
     delete(params) {
-        var request = this.client.delete(this.data.links['self'], params);
+        var request = this.client.delete(this.data.links['self'], undefined, params);
         return request.then(processResponse).then(function (response) {
             return response;
         });

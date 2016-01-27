@@ -39,8 +39,8 @@ module.exports = class Client {
         return this.request('PATCH', path, data, params, options);
     }
 
-    delete(path, params, options) {
-        return this.request('DELETE', path, undefined, params, options);
+    delete(path, data, params, options) {
+        return this.request('DELETE', path, data, params, options);
     }
 
     options(path, params, options) {
