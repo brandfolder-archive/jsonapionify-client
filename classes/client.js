@@ -74,6 +74,10 @@ module.exports = class Client {
         };
 
         if (data) {
+            if (method.toLowerCase() == 'delete') {
+                options.headers['X-Http-Method-Override'] = method;
+                options.method = 'POST'
+            }
             options.body = JSON.stringify(data)
         }
 

@@ -14,4 +14,13 @@ module.exports = class OneRelationship extends ResourceIdentifier {
     type() {
         return this.data.type;
     }
+
+    replace(resourceIdentifier, params) {
+        var manyRelationship = this;
+        var request = this.client.patch(this.links['self'], {data: resourceIdentifier.data}, params);
+        request.then(processResponse).then(function (response) {
+            manyRelationship.parseResponseJson(response.json);
+            return manyRelationship
+        })
+    }
 };
