@@ -11,7 +11,8 @@ module.exports = class Resource {
 
     index(params) {
         var resource = this;
-        return processResponse(this.client.get(this.name, params), function (response) {
+        var request = this.client.get(this.name, params);
+        return request.then(processResponse).then(function (response) {
             return new Collection(response.json, resource.client);
         });
     }
@@ -22,12 +23,15 @@ module.exports = class Resource {
 
     read(id, params) {
         var resource = this;
-        return processResponse(this.client.get(`${this.name}/${id}`, params), function (response) {
+        var request = this.client.get(`${this.name}/${id}`, params);
+        return request.then(processResponse).then(function (response) {
             return new Instance(response.json.data, resource.client);
         });
     }
-    options(){
-        return processResponse(this.client.options(this.name), function(response){
+
+    options() {
+        var request = this.client.options(this.name);
+        return request.then(processResponse).then(function (response) {
             return response;
         });
     }
