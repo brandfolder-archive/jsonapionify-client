@@ -16,8 +16,8 @@ module.exports = class Resource {
         });
     }
 
-    create(data, params) {
-        return this.client.post(this.name, {attributes: data}, params);
+    create(attributes, params) {
+        return this.client.post(this.name, {data: {attributes: attributes}}, params);
     }
 
     read(id, params) {
