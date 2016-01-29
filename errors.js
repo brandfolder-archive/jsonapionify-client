@@ -1,10 +1,9 @@
 "use strict";
 
 class HTTPError extends Error {
-    constructor(message) {
-        super(message);
+    constructor() {
+        super.apply(this, arguments);
         this.name = this.constructor.name;
-        this.message = message;
         Error.captureStackTrace(this, this.constructor.name)
     }
 }
@@ -20,7 +19,7 @@ for (var i = 400; i <= 599; i++) {
 
         HTTPError[ `_${i}` ] = class extends HTTPError[ baseClassName ] {
             constructor() {
-                super();
+                super.apply(this, arguments);
                 this.statusCode = statusCode;
             }
         };
