@@ -15,7 +15,7 @@ for (var i = 400; i <= 599; i++) {
         var baseClassName = `HTTPError${(i - i % 100) / 100}xx`;
 
         if (i % 100 == 0) {
-            classes[ baseClassName ] = class extends HTTPError {
+            classes[ baseClassName ] = class extends classes.HTTPError {
                 constructor(message, fileName, lineNumber) {
                     super(message, fileName, lineNumber);
                 }
