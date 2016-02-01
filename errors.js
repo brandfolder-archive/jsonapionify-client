@@ -1,8 +1,8 @@
 "use strict";
 
-const exports = {};
+const classes = {};
 
-exports.HTTPError = class extends Error {
+classes.HTTPError = class extends Error {
     constructor(message, fileName, lineNumber) {
         super(message, fileName, lineNumber);
         this.name = this.constructor.name;
@@ -15,14 +15,14 @@ for (var i = 400; i <= 599; i++) {
         var baseClassName = `HTTPError${(i - i % 100) / 100}xx`;
 
         if (i % 100 == 0) {
-            exports[ baseClassName ] = class extends HTTPError {
+            classes[ baseClassName ] = class extends HTTPError {
                 constructor(message, fileName, lineNumber) {
                     super(message, fileName, lineNumber);
                 }
             }
         }
 
-        exports[ `HTTPError${i}` ] = class extends exports[ baseClassName ] {
+        classes[ `HTTPError${i}` ] = class extends classes[ baseClassName ] {
             constructor(message, fileName, lineNumber) {
                 super(message, fileName, lineNumber);
                 this.statusCode = statusCode;
@@ -31,4 +31,4 @@ for (var i = 400; i <= 599; i++) {
     })(i)
 }
 
-module.exports = HTTPError;
+module.exports = classes;
