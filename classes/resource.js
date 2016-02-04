@@ -4,35 +4,50 @@ var Instance = require('./instance.js');
 var Collection = require('./collection.js');
 
 module.exports = class Resource {
-    constructor(name, client) {
-        this.name = name;
-        this.client = client;
-    }
+  constructor(type, api) {
+    this.type = type;
+    this.api = api
+    this.client = api.client;
+  }
 
-    index(params) {
-        var resource = this;
-        var request = this.client.get(this.name, params);
-        return request.then(processResponse).then(function (response) {
-            return new Collection(response.json, resource.client);
-        });
-    }
+  list(params) {
+    var resource = this;
+    var request = this.client.get(this.type, params);
+    return request.then(processResponse).then(function(response) {
+      return new Collection(response.json, resource);
+    });
+  }
 
-    create(attributes, params) {
-        return this.client.post(this.name, {data: {attributes: attributes}}, params);
-    }
+  new(attributes) {
+    return new Instance({
+      data: {
+        type: this.type,
+        attributes: attributes
+      }
+    })
+  }
 
-    read(id, params) {
-        var resource = this;
-        var request = this.client.get(`${this.name}/${id}`, params);
-        return request.then(processResponse).then(function (response) {
-            return new Instance(response.json.data, resource.client);
-        });
-    }
+  create(attributes, params) {
+    return this.client.post(this.type, {
+      data: {
+        attributes: attributes
+      }
+    }, params);
+  }
 
-    options() {
-        var request = this.client.options(this.name);
-        return request.then(processResponse).then(function (response) {
-            return response;
-        });
-    }
-};
+  read(id, params) {
+    var resource = this;
+    var request = this.client.get(`${this.type}/${id}`, params);
+    return request.then(processResponse).then(function(response) {
+      return new Instance(response.json.data, resource);
+    });
+  }
+
+  options() {
+    var request = this.client.options(this.type);
+    return request.then(processResponse).then(function(response) {
+      return response;
+    });
+  }
+}
+;
