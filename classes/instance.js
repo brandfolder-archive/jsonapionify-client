@@ -65,19 +65,19 @@ class Instance extends NullInstance {
     }
   }
 
-  relationship(name) {
+  relationship(name, params) {
     var instance = this;
     return instance.relationship_data(name).then(processResponse).then(function(response) {
-      return instance.client.get(response.links['self'])
+      return instance.client.get(response.links['self'], params)
     }).then(processResponse).then(function(response) {
       return oneOrManyRelationship(response, instance.client)
     });
   }
 
-  related(name) {
+  related(name, params) {
     var instance = this;
     return instance.relationship_data(name).then(processResponse).then(function(data) {
-      return instance.client.get(data.links['related'])
+      return instance.client.get(data.links['related'], params)
     }).then(processResponse).then(function(response) {
       return collectionOrInstance(response, instance.api)
     })
