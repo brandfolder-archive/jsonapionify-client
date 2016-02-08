@@ -1,6 +1,7 @@
 "use strict";
-var Client = require('./classes/client.js');
-var Resource = require('./classes/resource.js');
+require('es6-promise').polyfill();
+const Client = require('./classes/client.js');
+const Resource = require('./classes/resource.js');
 
 module.exports = class JSONAPIonify {
   constructor(baseUrl, ClientOptions) {

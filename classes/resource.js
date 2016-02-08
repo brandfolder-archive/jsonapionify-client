@@ -1,7 +1,9 @@
 "use strict";
-var processResponse = require('../helpers/process_response.js');
-var Instance = require('./instance.js');
-var Collection = require('./collection.js');
+const processResponse = require('../helpers/process_response.js');
+const Instance = require('./instance.js');
+const Collection = require('./collection.js');
+const collectionOrInstance = require('../helpers/collection_or_instance.js');
+const oneOrManyRelationship = require('../helpers/one_or_many_relationship.js');
 
 module.exports = class Resource {
   constructor(type, api) {
@@ -25,6 +27,20 @@ module.exports = class Resource {
         attributes: attributes
       }
     })
+  }
+
+  related(id, name, params) {
+    var resource = this;
+    return resource.client.get(`${resource.type}/${id}/${name}`, params).then(processResponse).then(function(response) {
+      return collectionOrInstance(response, resource.api)
+    })
+  }
+
+  relationships(id, name, params) {
+    var resource = this;
+    return resource.client.get(`${resource.type}/${id}/relationships/${name}`, params).then(processResponse).then(function(response) {
+      return oneOrManyRelationship(response, resource.client)
+    });
   }
 
   create(attributes, params) {

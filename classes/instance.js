@@ -1,39 +1,8 @@
 "use strict";
-var processResponse = require('../helpers/process_response.js');
-var NullInstance = require('./null_instance.js');
-
-function collectionOrInstance(response, api) {
-  var Collection = require('./collection.js');
-
-  // Return the collection, we need to fetch the options to determine the resource type
-  if (response.json.data instanceof Array) {
-    return api.client.options(response.json.links['self']).then(function(optionsResponse) {
-      var resource = api.resource(optionsResponse.json.meta.type)
-      return Promise.resolve(new Collection(response.json, resource), response);
-    })
-
-  // Return the instance
-  } else if (response.json.data instanceof Object) {
-    return Promise.resolve(new Instance(response.json.data, api.resource(response.json.data.type)), response);
-
-  // Return the null_instance, we need to fetch the options to determine the resource type
-  } else if (response.json.data == null) {
-    return api.client.options(response.json.links['self']).then(function(optionsResponse) {
-      var resource = api.resource(optionsResponse.json.meta.type)
-      return Promise.resolve(new NullInstance(resource, response.json.links['self']), response);
-    })
-  }
-}
-
-function oneOrManyRelationship(response, client) {
-  var ManyRelationship = require('./many_relationship.js');
-  var OneRelationship = require('./one_relationship.js');
-  if (response.json.data instanceof Array) {
-    return Promise.resolve(new ManyRelationship(response.json, client), response);
-  } else if (response.json.data instanceof Object) {
-    return Promise.resolve(new OneRelationship(response.json.data, client), response);
-  }
-}
+const processResponse = require('../helpers/process_response.js');
+const NullInstance = require('./null_instance.js');
+const collectionOrInstance = require('../helpers/collection_or_instance.js');
+const oneOrManyRelationship = require('../helpers/one_or_many_relationship.js');
 
 class Instance extends NullInstance {
   constructor(data, resource) {

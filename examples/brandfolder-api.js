@@ -17,8 +17,8 @@ console.log("loading organizations");
 api.resource('organizations').list().then(function(organizations) { // Get brandofolders relation
   console.log("loading brandfolders");
   return organizations.first().related('brandfolders');
-// }).then(function(brandfolders) {
-//   return brandfolders.deleteAll()
+}).then(function(brandfolders) {
+  return brandfolders.deleteAll()
 }).then(function(brandfolders) { // Create a Brandfolder
   console.log("create brandfolder");
   return brandfolders.create({
@@ -71,12 +71,19 @@ api.resource('organizations').list().then(function(organizations) { // Get brand
     return assets
   });
 }).then(function(assets) {
-  console.log("load first assets brandfolder")
-  debugger
+  console.log("load first asset's brandfolder")
   return assets.first().related("brandfolder")
 }).then(function(brandfolder) {
+  console.log("update the brandfolder")
   brandfolder.update({
     name: "I Hate Cats",
     slug: "i-hate-cats"
+  }).then(function(brandfolder) {
+    console.log("list related methods")
+    debugger
+    return Promise.all([
+      brandfolder.api.resource("brandfolders").related(brandfolder.id(), "sections").then(console.log).catch(logError),
+      brandfolder.api.resource("brandfolders").relationship(brandfolder.id(), "sections").then(console.log).catch(logError)
+    ])
   })
 }).catch(logError);

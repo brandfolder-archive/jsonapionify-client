@@ -1,5 +1,5 @@
 "use strict";
-var ResourceIdentifier = require('./resource_identifier');
+const ResourceIdentifier = require('./resource_identifier');
 
 module.exports = class OneRelationship extends ResourceIdentifier {
   constructor(data, client) {

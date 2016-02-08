@@ -1,5 +1,5 @@
 "use strict";
-var processResponse = require('../helpers/process_response.js');
+const processResponse = require('../helpers/process_response.js');
 
 module.exports = class NullInstance {
   constructor(resource, selfLink) {

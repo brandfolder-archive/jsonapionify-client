@@ -1,19 +1,18 @@
 "use strict";
-
-require('es6-promise').polyfill();
 require('isomorphic-fetch');
 
-var url = require('url');
-var http = require('http');
-var https = require('https');
-var ClientResponse = require('./client_response.js');
-var _ = require('lodash');
-var parameterize = require('jquery-param');
+const url = require('url');
+const http = require('http');
+const https = require('https');
+const ClientResponse = require('./client_response.js');
+const _ = require('lodash');
+const parameterize = require('jquery-param');
 
 module.exports = class Client {
   constructor(baseUrl, options) {
     // Setup Headers
     options = options || {};
+    this.noisy = !!options.noisy
     this.headers = {};
     this.headers["Content-Type"] = 'application/vnd.api+json';
     this.headers["Accept"] = 'application/vnd.api+json';
@@ -48,6 +47,7 @@ module.exports = class Client {
   }
 
   request(method, path, data, params, options) {
+    var client = this;
     path = path || '';
     var requestUrl;
 
@@ -81,6 +81,18 @@ module.exports = class Client {
       options.body = JSON.stringify(data)
     }
 
+    if (this.noisy) {
+      console.log('\n')
+      console.log(`${options.method} ${path} HTTP/1.1`)
+      Object.keys(options.headers).forEach(function(k) {
+        console.log(`> ${k}: ${options.headers[k]}`)
+      })
+      console.log('>')
+      if (options.body) {
+        console.log(options.body)
+      }
+    }
+
     var response;
 
     return fetch(requestUrl, options).then(function(res) {
@@ -88,6 +100,17 @@ module.exports = class Client {
       return res.text()
     }).then(function(body) {
       response.setBody(body);
+      if (client.noisy) {
+        console.log(`${method} ${path} HTTP/1.1`)
+        debugger
+        Object.keys(response.headers._headers).forEach(function(k) {
+          console.log(`< ${k}: ${response.headers._headers[k]}`)
+        })
+        console.log('<')
+        if (body) {
+          console.log(body)
+        }
+      }
       return response;
     })
   }
