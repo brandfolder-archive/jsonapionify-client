@@ -17,8 +17,8 @@ console.log("loading organizations");
 api.resource('organizations').list().then(function(organizations) { // Get brandofolders relation
   console.log("loading brandfolders");
   return organizations.first().related('brandfolders');
-}).then(function(brandfolders) {
-  return brandfolders.deleteAll()
+// }).then(function(brandfolders) {
+//   return brandfolders.deleteAll()
 }).then(function(brandfolders) { // Create a Brandfolder
   console.log("create brandfolder");
   return brandfolders.create({
