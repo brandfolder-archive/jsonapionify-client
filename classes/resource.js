@@ -36,7 +36,7 @@ module.exports = class Resource {
     })
   }
 
-  relationships(id, name, params) {
+  relationship(id, name, params) {
     var resource = this;
     return resource.client.get(`${resource.type}/${id}/relationships/${name}`, params).then(processResponse).then(function(response) {
       return oneOrManyRelationship(response, resource.client)
