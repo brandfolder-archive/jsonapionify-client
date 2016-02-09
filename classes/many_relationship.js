@@ -3,9 +3,10 @@ const ResourceIdentifier = require('./resource_identifier');
 const processResponse = require('../helpers/process_response.js');
 
 function resourceIdentifiersToData(resourceIdentifiers) {
-  if (!resourceIdentifiers instanceof Array) {
+  if (!(resourceIdentifiers instanceof Array)) {
     resourceIdentifiers = [resourceIdentifiers]
   }
+  debugger
   return resourceIdentifiers.map(function(rid) {
     return {
       id: rid.id(),

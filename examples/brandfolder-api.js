@@ -73,17 +73,24 @@ api.resource('organizations').list().then(function(organizations) { // Get brand
 }).then(function(assets) {
   console.log("load first asset's brandfolder")
   return assets.first().related("brandfolder")
+// }).then(function(brandfolder) {
+//   console.log("update the brandfolder")
+//   return brandfolder.update({
+//     name: "I Hate Cats",
+//     slug: "i-hate-cats"
+//   })
 }).then(function(brandfolder) {
-  console.log("update the brandfolder")
-  brandfolder.update({
-    name: "I Hate Cats",
-    slug: "i-hate-cats"
-  }).then(function(brandfolder) {
-    console.log("list related methods")
-    debugger
-    return Promise.all([
-      brandfolder.api.resource("brandfolders").related(brandfolder.id(), "sections").then(console.log).catch(logError),
-      brandfolder.api.resource("brandfolders").relationship(brandfolder.id(), "sections").then(console.log).catch(logError)
-    ])
-  })
+  console.log("list related methods")
+  var publicApi = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT);
+
+  var newAdmin = publicApi.resource("users").create({
+    email: `devman+${new Date() * 1}@brandfolder.com`,
+    password: 'weakpassword1'
+  }).then((user) => brandfolder.relationship("admins").then((admins) => admins.add(user)))
+
+  return Promise.all([
+    newAdmin,
+    brandfolder.api.resource("brandfolders").related(brandfolder.id(), "sections").then(console.log).catch(logError),
+    brandfolder.api.resource("brandfolders").relationship(brandfolder.id(), "sections").then(console.log).catch(logError)
+  ])
 }).catch(logError);

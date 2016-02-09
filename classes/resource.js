@@ -44,11 +44,15 @@ module.exports = class Resource {
   }
 
   create(attributes, params) {
+    var resource = this;
     return this.client.post(this.type, {
       data: {
+        type: this.type,
         attributes: attributes
       }
-    }, params);
+    }, params).then(processResponse).then(function(response) {
+      return new Instance(response.json.data, resource)
+    });
   }
 
   read(id, params) {
