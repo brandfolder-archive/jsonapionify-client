@@ -23,10 +23,9 @@ module.exports = class Resource {
   new(attributes) {
     return new Instance({
       data: {
-        type: this.type,
         attributes: attributes
       }
-    })
+    }, this)
   }
 
   related(id, name, params) {

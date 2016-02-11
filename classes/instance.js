@@ -9,6 +9,8 @@ class Instance extends NullInstance {
     super(resource)
     this.data = data;
     this.data.type = this.data.type || resource.type;
+    this.data.attributes = this.data.attributes || {}
+    this.data.links = this.data.links || {}
   }
 
   id() {
