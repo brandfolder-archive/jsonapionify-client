@@ -2,15 +2,12 @@
 const processResponse = require('../helpers/process_response.js');
 
 module.exports = class NullInstance {
-  constructor(resource, selfLink) {
+  constructor(resource, createUrl) {
     this.data = {};
     this.data.type = resource.type;
     this.data.links = {};
     this.data.attrubutes = {};
-
-    if (selfLink) {
-      this.data.links['self'] = selfLink
-    }
+    this.createUrl = createUrl
 
     // Delegation
     this.resource = resource;
@@ -44,11 +41,24 @@ module.exports = class NullInstance {
     return this.save(params);
   }
 
+  id() {
+    return this.data.id;
+  }
+
+  isPersisted() {
+    return !!this.id()
+  }
+
   save(params) {
     var instance = this;
-    var request = instance.client.post(instance.data.links['self'], {
-      data: instance.data
-    }, params);
+    var request;
+    if (this.createUrl) {
+      request = instance.client.post(this.createUrl, {
+        data: this.data
+      }, params);
+    } else {
+      request = this.resource.create(instance.data, params)
+    }
     return request.then(processResponse).then(function(response) {
       instance.data = response.json.data;
       return instance;

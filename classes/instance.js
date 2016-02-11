@@ -13,10 +13,6 @@ class Instance extends NullInstance {
     this.data.links = this.data.links || {}
   }
 
-  id() {
-    return this.data.id;
-  }
-
   reload() {
     var instance = this;
     return this.client.get(this.link('self')).then(processResponse).then(function(response) {
@@ -55,6 +51,9 @@ class Instance extends NullInstance {
   }
 
   save(params) {
+    if (!this.isPersisted) {
+      return super.save()
+    }
     var instance = this;
     var request = instance.client.patch(instance.data.links['self'], {
       data: instance.data
