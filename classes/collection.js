@@ -29,12 +29,32 @@ module.exports = class Collection extends Array {
     return this[-1];
   }
 
+  link(name) {
+    return this.links[name]
+  }
+
   create(data, params) {
     var collection = this;
     var request = this.client.post(this.links['self'], {
       data: {
         type: this.resource.type,
         attributes: data
+      }
+    }, params);
+    return request.then(processResponse).then(function(response) {
+      var instance = new Instance(response.json.data, collection.resource);
+      collection.push(instance);
+      return instance;
+    })
+  }
+
+  createWithId(id, attributes, params) {
+    var collection = this;
+    var request = this.client.post(this.links['self'], {
+      data: {
+        id: id,
+        type: this.resource.type,
+        attributes: attributes
       }
     }, params);
     return request.then(processResponse).then(function(response) {

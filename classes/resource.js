@@ -54,6 +54,19 @@ module.exports = class Resource {
     });
   }
 
+  createWithId(id, attributes, params) {
+    var resource = this;
+    return this.client.post(this.type, {
+      data: {
+        id: id,
+        type: this.type,
+        attributes: attributes
+      }
+    }, params).then(processResponse).then(function(response) {
+      return new Instance(response.json.data, resource)
+    });
+  }
+
   read(id, params) {
     var resource = this;
     var request = this.client.get(`${this.type}/${id}`, params);
