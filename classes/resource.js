@@ -21,7 +21,7 @@ module.exports = class Resource {
   }
 
   emptyCollection() {
-    return new Collection({}, this.resource);
+    return new Collection({}, this);
   }
 
   new(attributes) {
