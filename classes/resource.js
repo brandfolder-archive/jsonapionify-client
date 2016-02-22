@@ -20,6 +20,10 @@ module.exports = class Resource {
     });
   }
 
+  emptyCollection() {
+    return new Collection({}, resource);
+  }
+
   new(attributes) {
     return new Instance({
       data: {
