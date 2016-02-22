@@ -33,7 +33,7 @@ module.exports = class NullInstance {
   }
 
   cursor() {
-    return meta('cursor')
+    return this.meta('cursor')
   }
 
   link(name) {
