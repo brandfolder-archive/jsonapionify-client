@@ -29,8 +29,12 @@ module.exports = class Collection extends Array {
     return this[-1];
   }
 
+  links() {
+    return this.links || {}
+  }
+
   link(name) {
-    return this.links[name]
+    return this.links()[name]
   }
 
   create(data, params) {
