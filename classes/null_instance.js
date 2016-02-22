@@ -28,6 +28,14 @@ module.exports = class NullInstance {
     return this.data.attributes;
   }
 
+  meta(name) {
+    return (this.data.meta || {})[name]
+  }
+
+  cursor() {
+    return meta('cursor')
+  }
+
   link(name) {
     return this.data.links[name];
   }
