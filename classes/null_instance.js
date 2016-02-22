@@ -36,12 +36,8 @@ module.exports = class NullInstance {
     return this.meta('cursor')
   }
 
-  links() {
-    return this.links || {}
-  }
-
   link(name) {
-    return this.links()[name]
+    return this.links[name]
   }
 
   update(attributes, params) {

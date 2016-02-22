@@ -11,8 +11,8 @@ module.exports = class Collection extends Array {
     this.responseJson = responseJson;
     this.resource = resource;
     this.client = resource.client;
-    this.links = responseJson.links;
-    this.meta = responseJson.meta;
+    this.links = responseJson.links || {};
+    this.meta = responseJson.meta || {};
 
     data.forEach(function(data) {
       collection.push(new Instance(data, resource));
@@ -29,12 +29,8 @@ module.exports = class Collection extends Array {
     return this[-1];
   }
 
-  links() {
-    return this.links || {}
-  }
-
   link(name) {
-    return this.links()[name]
+    return this.links[name]
   }
 
   create(data, params) {
