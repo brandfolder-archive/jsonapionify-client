@@ -1,0 +1,9 @@
+{
+  "presets": [
+    "es2016-node5"
+  ],
+  "ignore": [
+    "node_modules",
+    "adapters"
+  ]
+}

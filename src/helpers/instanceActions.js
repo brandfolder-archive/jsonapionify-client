@@ -1,0 +1,56 @@
+const processResponse = require('../helpers/processResponse');
+const { prepareInstanceRequestBodyFor } = require('./preparers');
+const { HTTPError404, NotPersistedError } = require('../errors');
+
+function reloadInstance(instance, params) {
+  var { buildInstanceWithResponse } = require('./builders');
+  var uri = instance.uri();
+  var collectionUri = instance.collection && instance.collection.uri();
+  if (uri === undefined || uri === collectionUri || instance.id === undefined) {
+    return Promise.reject(new NotPersistedError('Instance is not persisted'));
+  }
+  return instance.api.client.get(uri, params).then(processResponse).then(
+    buildInstanceWithResponse.bind(undefined, instance)
+  ).catch(function (error) {
+    if (error instanceof HTTPError404) {
+      return Promise.reject(new NotPersistedError('Instance is not persisted'));
+    }
+    throw error;
+  });
+}
+
+function deleteInstance(instance, params) {
+  var { buildDeletedInstanceWithResponse } = require('./builders');
+  return instance.api.client.delete(instance.links.self, params).then(
+    buildDeletedInstanceWithResponse.bind(undefined, instance)
+  );
+}
+
+function patchInstance(instance, params) {
+  var { buildInstanceWithResponse } = require('./builders');
+  return prepareInstanceRequestBodyFor(instance, 'PATCH').then(function (body) {
+    return instance.api.client.patch(instance.uri(), body, params).then(
+      processResponse
+    ).then(
+      buildInstanceWithResponse.bind(undefined, instance)
+    );
+  });
+}
+
+function postInstance(instance, params) {
+  var { buildInstanceWithResponse } = require('./builders');
+  return prepareInstanceRequestBodyFor(instance, 'POST').then(function (body) {
+    return instance.api.client.post(instance.uri(), body, params).then(
+      processResponse
+    ).then(
+      buildInstanceWithResponse.bind(undefined, instance)
+    );
+  });
+}
+
+module.exports = {
+  deleteInstance,
+  patchInstance,
+  postInstance,
+  reloadInstance
+};

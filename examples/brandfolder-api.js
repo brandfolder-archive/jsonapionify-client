@@ -1,9 +1,20 @@
-"use strict";
-const JSONAPIonify = require('../index.js');
-const crypto = require('crypto');
+'use strict';
+const JSONAPIonify = require('../src/index.js');
 const _ = require('lodash');
-const logError = require('../helpers/logError.js');
-const url = require('url');
+const stackTrace = require('stack-trace');
+
+module.exports = function logError(error) {
+  console.error('');
+
+  error = error.error !== undefined ? error.error : error;
+  var stack = stackTrace.parse(error);
+  console.error(error.toString());
+  stack.forEach(function(trace, index) {
+    console.error(`${index}: ${trace.getFileName()}:${trace.getLineNumber()}:in ${trace.getFunctionName()}`);
+  });
+
+  console.error('');
+};
 
 var opts = {
   headers: {}
@@ -13,84 +24,112 @@ if (process.env.BRANDFOLDER_API_KEY) {
 }
 var api = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT, opts);
 
-console.log("loading organizations");
-api.resource('organizations').list().then(function(organizations) { // Get brandofolders relation
-  console.log("loading brandfolders");
+console.log('loading organizations');
+api.resource('organizations').list().then(function({collection: organizations}) { // Get brandofolders relation
+  console.log('loading brandfolders');
   return organizations.first().related('brandfolders');
-// }).then(function(brandfolders) {
-//   return brandfolders.deleteAll()
-}).then(function(brandfolders) { // Create a Brandfolder
-  console.log("create brandfolder");
+}).then(function({collection: brandfolders}) {
+  if (brandfolders.length > 3) {
+    console.log('deleting last brandfolder');
+    return brandfolders.last().delete();
+  } else {
+    return {
+      collection: brandfolders
+    };
+  }
+}).then(function({collection: brandfolders}) { // Create a Brandfolder
+  console.log('create brandfolder');
   return brandfolders.create({
-    name: 'Lots of Cats'
+    attributes: {
+      name: 'Lots of Cats'
+    }
   });
-}).then(function(brandfolder) { // Get the sections relation
-  console.log("load sections");
+}).then(function({instance: brandfolder}) { // Get the sections relation
+  console.log('load sections');
   return brandfolder.related('sections');
-}).then(function(sections) { // Delete all the existing sections
-  console.log("delete sections");
-  return sections.deleteAll()
-}).then(function(sections) { // Create a section
-  console.log("create section");
+}).then(function({collection: sections}) { // Delete all the existing sections
+  console.log('delete sections');
+  return sections.deleteAll();
+}).then(function({collection: sections}) { // Create a section
+  console.log('create section');
   return sections.create({
-    name: 'Random Cats',
-    default_asset_type: 'GenericFile'
-  })
-}).then(function(section) { // Get the "assets" relation
-  console.log("load assets");
-  return section.related('assets')
-}).then(function(assets) { // Create Some Assets
-  console.log("create assets");
+    attributes: {
+      name: 'Random Cats',
+      default_asset_type: 'GenericFile'
+    }
+  });
+}).then(function({instance: section}) { // Get the "assets" relation
+  console.log('load assets');
+  return section.related('assets');
+}).then(function({collection: assets}) { // Create Some Assets
+  console.log('create assets');
   return Promise.all(_.times(3, function(i) {
     var count = i + 1;
-    console.log("create asset");
+    console.log('create asset');
     return assets.create({
-      name: `Cat ${count}`
-    }).then(function(asset) {
-      console.log("Participate in the asset")
-      return asset.related("participation").then(function(participant) {
-        return participant.update({
+      attributes: {
+        name: `Cat ${count}`
+      }
+    }).then(function({instance: asset}) {
+      console.log('Participate in the asset');
+      return asset.related('participation').then(function({instance: participant}) {
+        return participant.updateAttributes({
           subscribed: true
-        })
+        });
       }).then(function() {
-        return asset
-      })
-    }).then(function(asset) {
-      console.log("fetch attachments");
-      return asset.related('attachments')
-    }).then(function(attachments) { // Create an attachment
-      console.log("create attachment");
+        return {
+          instance: asset
+        };
+      });
+    }).then(function({instance: asset}) {
+      console.log('fetch attachments');
+      return asset.related('attachments');
+    }).then(function({collection: attachments}) { // Create an attachment
+      console.log('create attachment');
       return attachments.create({
-        url: 'http://lorempixel.com/500/500/cats/'
-      })
-    }).then(function(attachment) {
-      console.log("DONE!")
-      return attachment
+        attributes: {
+          url: 'http://lorempixel.com/500/500/cats/'
+        }
+      });
+    }).then(function({instance: attachment}) {
+      console.log('DONE!');
+      return attachment;
     });
   })).then(function() {
-    return assets
+    return assets.reload();
   });
-}).then(function(assets) {
-  console.log("load first asset's brandfolder")
-  return assets.first().related("brandfolder")
-// }).then(function(brandfolder) {
-//   console.log("update the brandfolder")
-//   return brandfolder.update({
-//     name: "I Hate Cats",
-//     slug: "i-hate-cats"
-//   })
-}).then(function(brandfolder) {
-  console.log("list related methods")
+}).then(function({collection: assets}) {
+  console.log('load first asset\'s brandfolder');
+  return assets.first().updateAttributes({
+    name: 'Not a cat!',
+    description: 'This is not a cat',
+  }).then(function({instance: asset}) {
+    return asset.related('brandfolder');
+  });
+}).then(function({instance: brandfolder}) {
   var publicApi = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT);
-
-  var newAdmin = publicApi.resource("users").create({
-    email: `devman+${new Date() * 1}@brandfolder.com`,
-    password: 'weakpassword1'
-  }).then((user) => brandfolder.relationship("admins").then((admins) => admins.add(user)))
-
+  var i = 0;
+  return Promise.all(_.times(2, function() {
+    return publicApi.resource('users').create({
+      attributes: {
+        email: `devman+${(new Date() * 1)}-${i++}-@brandfolder.com`,
+        password: 'weakpassword1'
+      }
+    });
+  })).then(function(results) {
+    var users = results.map(function({instance: user}) {
+      return user;
+    });
+    return brandfolder.relationship('admins').then(function({relationship: admins}) {
+      admins.add(users);
+    });
+  }).then(function() {
+    return brandfolder;
+  });
+}).then(function(brandfolder) {
+  console.log('test resource relationships');
   return Promise.all([
-    newAdmin,
-    brandfolder.api.resource("brandfolders").related(brandfolder.id(), "sections").then(console.log).catch(logError),
-    brandfolder.api.resource("brandfolders").relationship(brandfolder.id(), "sections").then(console.log).catch(logError)
-  ])
+    brandfolder.api.resource('brandfolders').relatedForId(brandfolder.id, 'sections').then(console.log).catch(logError),
+    brandfolder.api.resource('brandfolders').relationshipForId(brandfolder.id, 'sections').then(console.log).catch(logError)
+  ]);
 }).catch(logError);
