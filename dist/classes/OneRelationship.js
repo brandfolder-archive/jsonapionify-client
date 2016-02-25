@@ -1,7 +1,7 @@
 'use strict';
 
 const ResourceIdentifier = require('./resourceIdentifier');
-const processResponse = require('./processResponse');
+const processResponse = require('../helpers/processResponse');
 
 module.exports = class OneRelationship extends ResourceIdentifier {
   constructor(_ref, _ref2) {

@@ -7,7 +7,7 @@ function collectionWithoutInstance(collection, instance) {
   if (!(collection instanceof Collection) || !instance) {
     return collection;
   }
-  var instanceIndex = this.indexOf(instance);
+  var instanceIndex = collection.indexOf(instance);
   var data = Array.of(...collection).splice(0, instanceIndex);
   var links = collection.links;
   var meta = collection.meta;
