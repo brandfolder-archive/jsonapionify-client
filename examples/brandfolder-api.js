@@ -3,7 +3,7 @@ const JSONAPIonify = require('../src/index.js');
 const _ = require('lodash');
 const stackTrace = require('stack-trace');
 
-module.exports = function logError(error) {
+function logError(error) {
   console.error('');
 
   error = error.error !== undefined ? error.error : error;
@@ -19,6 +19,7 @@ module.exports = function logError(error) {
 var opts = {
   headers: {}
 };
+
 if (process.env.BRANDFOLDER_API_KEY) {
   opts.headers.Authorization = `JWT ${process.env.BRANDFOLDER_API_KEY}`;
 }
@@ -27,7 +28,9 @@ var api = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT, opts);
 console.log('loading organizations');
 api.resource('organizations').list().then(function({collection: organizations}) { // Get brandofolders relation
   console.log('loading brandfolders');
-  return organizations.first().related('brandfolders');
+  var organization = organizations.first();
+  organization.relatedOptions('brandfolders').then(({json}) => console.log(json));
+  return organization.related('brandfolders');
 }).then(function({collection: brandfolders}) {
   if (brandfolders.length > 3) {
     console.log('deleting last brandfolder');
