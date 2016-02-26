@@ -10,7 +10,7 @@ class Collection extends Array {
 
     this.links = Object.freeze(links);
     this.meta = Object.freeze(meta);
-    data.forEach(function (instanceData) {
+    (data || []).forEach(function (instanceData) {
       this.push(new Instance(instanceData, api, this));
     }, this);
 

@@ -31,16 +31,17 @@ function getRelationshipData(instance, name) {
   );
   var { api, relationships } = instance;
   if (instance.relationships === undefined) {
-    return instance.reload().then(function ({ instance: reloadedInstance }) {
-      var data = reloadedInstance.relationships[name];
-      if (data === undefined) {
-        throw error;
-      }
-      return {
-        data,
-        api
-      };
-    });
+    return instance.reload({ 'include-relationships': true }).then(
+      function ({ instance: reloadedInstance }) {
+        var data = reloadedInstance.relationships[name];
+        if (data === undefined) {
+          throw error;
+        }
+        return {
+          data,
+          api
+        };
+      });
   }
   var data = relationships[name];
   if (data === undefined) {

@@ -37,7 +37,7 @@ function getRelationshipData(instance, name) {
   var relationships = instance.relationships;
 
   if (instance.relationships === undefined) {
-    return instance.reload().then(function (_ref2) {
+    return instance.reload({ 'include-relationships': true }).then(function (_ref2) {
       let reloadedInstance = _ref2.instance;
 
       var data = reloadedInstance.relationships[name];
