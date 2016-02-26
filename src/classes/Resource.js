@@ -64,6 +64,6 @@ module.exports = class Resource {
   }
 
   options() {
-    return this.client.options(this.type).then(processResponse);
+    return this.api.client.options(this.type).then(processResponse);
   }
 };
