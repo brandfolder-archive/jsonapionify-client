@@ -1,5 +1,5 @@
 'use strict';
-const JSONAPIonify = require('../src/index.js');
+const { JSONAPIonify } = require('../src/index.js');
 const _ = require('lodash');
 const stackTrace = require('stack-trace');
 
@@ -28,7 +28,10 @@ var api = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT, opts);
 console.log('loading organizations');
 api.resource('organizations').list().then(function({collection: organizations}) { // Get brandofolders relation
   console.log('loading brandfolders');
-  var organization = organizations.first();
+  return organizations.first();
+}).then(function(organization){
+  return api.resource('organizations').read(organization.id)
+}).then(function({ instance: organization }){
   organization.relatedOptions('brandfolders').then(({json}) => console.log(json));
   return organization.related('brandfolders');
 }).then(function({collection: brandfolders}) {
