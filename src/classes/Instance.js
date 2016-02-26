@@ -17,9 +17,9 @@ class Instance extends ResourceIdentifier {
     this.api = api;
     this.collection = collection;
     this.attributes = Object.freeze(attributes || {});
-    this.relationships = Object.freeze(relationships || {});
     this.links = Object.freeze(links || {});
     this.meta = Object.freeze(meta || {});
+    this.relationships = Object.freeze(relationships);
 
     this.persisted = Boolean(this.links.self);
 

@@ -1,5 +1,5 @@
 'use strict';
-function buildError(statusCode) {
+function buildHttpError(statusCode) {
   var baseClassName = `HTTPError${(i - i % 100) / 100}xx`;
 
   if (i % 100 === 0) {
@@ -30,19 +30,20 @@ classes.HTTPError = class extends Error {
 ;
 
 for (var i = 400; i <= 599; i++) {
-  buildError(i);
+  buildHttpError(i);
 }
 
-classes.NotPersistedError = class extends Error {
-  constructor(...args) {
-    super(...args);
-  }
-};
-
-classes.VerbUnsupportedError = class extends Error {
-  constructor(...args) {
-    super(...args);
-  }
-};
+var errorNames = [
+  'InvalidRelationshipError',
+  'NotNotPersistedError',
+  'VerbUnsupportedError'
+];
+errorNames.forEach(function (errorName) {
+  classes[errorName] = class extends Error {
+    constructor(...args) {
+      super(...args);
+    }
+  };
+});
 
 module.exports = classes;

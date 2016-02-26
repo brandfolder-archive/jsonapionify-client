@@ -18,8 +18,7 @@
   ],
   "main": "dist/index.js",
   "directories": {
-    "lib": "./dist",
-    "src": "./src"
+    "lib": "./dist"
   },
   "files": [
     "dist",

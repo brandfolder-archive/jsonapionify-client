@@ -3,6 +3,7 @@
 var _require = require('../errors');
 
 const VerbUnsupportedError = _require.VerbUnsupportedError;
+const InvalidRelationshipError = _require.InvalidRelationshipError;
 
 // Prep Instance Data
 
@@ -31,14 +32,18 @@ function prepareInstanceRequestBodyFor(instance, verb) {
 }
 
 function getRelationshipData(instance, name) {
+  var error = new InvalidRelationshipError(`${ name } is not a valid realtionship`);
   var api = instance.api;
   var relationships = instance.relationships;
 
-  if (Object.keys(instance.relationships).length === 0) {
+  if (instance.relationships === undefined) {
     return instance.reload().then(function (_ref2) {
       let reloadedInstance = _ref2.instance;
 
       var data = reloadedInstance.relationships[name];
+      if (data === undefined) {
+        throw error;
+      }
       return {
         data,
         api
@@ -46,6 +51,9 @@ function getRelationshipData(instance, name) {
     });
   }
   var data = relationships[name];
+  if (data === undefined) {
+    throw error;
+  }
   return Promise.resolve({
     data,
     api
