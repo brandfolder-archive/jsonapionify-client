@@ -44,9 +44,7 @@ module.exports = class Resource {
   }
 
   read(id, params) {
-    return new {
-      id
-    }.reload(params);
+    return new Instance({ type: this.type, id }, this.api).reload(params);
   }
 
   uri() {
