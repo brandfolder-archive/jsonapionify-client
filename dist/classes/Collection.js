@@ -14,8 +14,8 @@ class Collection extends Array {
     this.api = api;
     this.defaultResource = defaultResource;
 
-    this.links = Object.freeze(links);
-    this.meta = Object.freeze(meta);
+    this.links = Object.freeze(links || {});
+    this.meta = Object.freeze(meta || {});
     (data || []).forEach(function (instanceData) {
       this.push(new Instance(instanceData, api, this));
     }, this);

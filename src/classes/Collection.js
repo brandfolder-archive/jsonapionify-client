@@ -2,14 +2,14 @@ const Instance = require('./instance.js');
 const processResponse = require('../helpers/processResponse.js');
 
 class Collection extends Array {
-  constructor({ data, links, meta } , api, defaultResource) {
+  constructor({ data, links, meta }, api, defaultResource) {
     super();
 
     this.api = api;
     this.defaultResource = defaultResource;
 
-    this.links = Object.freeze(links);
-    this.meta = Object.freeze(meta);
+    this.links = Object.freeze(links || {});
+    this.meta = Object.freeze(meta || {});
     (data || []).forEach(function (instanceData) {
       this.push(new Instance(instanceData, api, this));
     }, this);
