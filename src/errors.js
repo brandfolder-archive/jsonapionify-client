@@ -35,7 +35,7 @@ for (var i = 400; i <= 599; i++) {
 
 var errorNames = [
   'InvalidRelationshipError',
-  'NotNotPersistedError',
+  'NotPersistedError',
   'VerbUnsupportedError'
 ];
 errorNames.forEach(function (errorName) {

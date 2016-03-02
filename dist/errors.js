@@ -33,7 +33,7 @@ for (var i = 400; i <= 599; i++) {
   buildHttpError(i);
 }
 
-var errorNames = ['InvalidRelationshipError', 'NotNotPersistedError', 'VerbUnsupportedError'];
+var errorNames = ['InvalidRelationshipError', 'NotPersistedError', 'VerbUnsupportedError'];
 errorNames.forEach(function (errorName) {
   classes[errorName] = class extends Error {
     constructor() {
