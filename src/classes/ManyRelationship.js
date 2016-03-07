@@ -1,4 +1,4 @@
-const ResourceIdentifier = require('./resourceIdentifier');
+const ResourceIdentifier = require('./ResourceIdentifier');
 const processResponse = require('../helpers/processResponse.js');
 
 function itemsToResourceIdentifiers(resourceIdentifiers) {

@@ -1,4 +1,3 @@
-'use strict';
 function buildHttpError(statusCode) {
   var baseClassName = `HTTPError${(i - i % 100) / 100}xx`;
 

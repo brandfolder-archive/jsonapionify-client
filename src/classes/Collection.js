@@ -1,4 +1,4 @@
-const Instance = require('./instance.js');
+const Instance = require('./Instance.js');
 const processResponse = require('../helpers/processResponse.js');
 
 class Collection extends Array {
