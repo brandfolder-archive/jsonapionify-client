@@ -1,5 +1,6 @@
 const Instance = require('./Instance.js');
 const processResponse = require('../helpers/processResponse.js');
+const url = require('url');
 
 class Collection extends Array {
   constructor({ data, links, meta }, api, defaultResource) {
@@ -106,8 +107,13 @@ class Collection extends Array {
     );
   }
 
-  uri() {
-    return this.links.self || this.defaultResource.type;
+  uri(params = false) {
+    var u = url.parse(this.links.self || this.defaultResource.type);
+    if (!params) {
+      u.search = undefined;
+      u.query = undefined;
+    }
+    return u.format();
   }
 }
 

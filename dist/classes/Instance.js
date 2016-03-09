@@ -11,6 +11,9 @@ var _require2 = require('../errors');
 
 const NotPersistedError = _require2.NotPersistedError;
 
+const url = require('uri');
+const _ = require('lodash');
+
 var _require3 = require('../helpers/instanceActions');
 
 const reloadInstance = _require3.reloadInstance;
@@ -139,11 +142,19 @@ class Instance extends ResourceIdentifier {
   }
 
   uri() {
-    var collectionUri = this.collection ? this.collection.uri() : undefined;
-    return this.links.self || collectionUri || [this.type, this.id].filter(function (i) {
-      return i !== undefined;
-    }).join('/');
+    let params = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+
+    var selfUri = this.links.self;
+    var parentUri = this.collection && this.collection.uri(false);
+    var resourceUri = _.compact([this.type, this.id]).join('/');
+    var u = url.parse(selfUri || parentUri || resourceUri);
+    if (!params) {
+      u.search = undefined;
+      u.query = undefined;
+    }
+    return u.format();
   }
+
   // Writes the new attributes, returns an instance with the newly written
   // attributes
   writeAttributes(attributes) {

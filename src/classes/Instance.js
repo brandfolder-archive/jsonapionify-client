@@ -2,6 +2,8 @@ const ResourceIdentifier = require('./ResourceIdentifier');
 const processResponse = require('../helpers/processResponse');
 const { getRelationshipData } = require('../helpers/preparers');
 const { NotPersistedError } = require('../errors');
+const url = require('uri');
+const _ = require('lodash');
 const {
   reloadInstance, patchInstance, postInstance, deleteInstance
 } = require('../helpers/instanceActions');
@@ -116,14 +118,18 @@ class Instance extends ResourceIdentifier {
     });
   }
 
-  uri() {
-    var collectionUri = this.collection ? this.collection.uri() : undefined;
-    return this.links.self ||
-      collectionUri ||
-      [ this.type, this.id ].filter(function (i) {
-        return i !== undefined;
-      }).join('/');
+  uri(params = false) {
+    var selfUri = this.links.self;
+    var parentUri = this.collection && this.collection.uri(false);
+    var resourceUri = _.compact([ this.type, this.id ]).join('/');
+    var u = url.parse(selfUri || parentUri || resourceUri);
+    if (!params) {
+      u.search = undefined;
+      u.query = undefined;
+    }
+    return u.format();
   }
+
   // Writes the new attributes, returns an instance with the newly written
   // attributes
   writeAttributes(attributes) {
