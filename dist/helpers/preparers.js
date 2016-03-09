@@ -32,7 +32,7 @@ function prepareInstanceRequestBodyFor(instance, verb) {
 }
 
 function getRelationshipData(instance, name) {
-  var error = new InvalidRelationshipError(`${ name } is not a valid realtionship`);
+  var error = new InvalidRelationshipError(`${ name } is not a valid relationship`);
   var api = instance.api;
   var relationships = instance.relationships;
 
