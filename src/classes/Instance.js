@@ -2,7 +2,7 @@ const ResourceIdentifier = require('./ResourceIdentifier');
 const processResponse = require('../helpers/processResponse');
 const { getRelationshipData } = require('../helpers/preparers');
 const { NotPersistedError } = require('../errors');
-const url = require('uri');
+const url = require('url');
 const _ = require('lodash');
 const {
   reloadInstance, patchInstance, postInstance, deleteInstance

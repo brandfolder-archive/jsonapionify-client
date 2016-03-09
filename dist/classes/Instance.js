@@ -11,7 +11,7 @@ var _require2 = require('../errors');
 
 const NotPersistedError = _require2.NotPersistedError;
 
-const url = require('uri');
+const url = require('url');
 const _ = require('lodash');
 
 var _require3 = require('../helpers/instanceActions');
