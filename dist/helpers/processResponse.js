@@ -20,7 +20,7 @@ function errorsToMessage(errors) {
 
 function processResponse(response) {
   return new Promise(function (resolve, reject) {
-    var json = response.json();
+    var json = response.json;
     if (json.errors) {
       var message = errorsToMessage(json.errors);
       var error = new Errors[`HTTPError${ response.status }`](message);

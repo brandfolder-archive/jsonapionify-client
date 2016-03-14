@@ -1,5 +1,5 @@
 'use strict';
-const { JSONAPIonify } = require('../src/index.js');
+const { JSONAPIonify, jsonApionifyLogger } = require('../src/index.js');
 const _ = require('lodash');
 const stackTrace = require('stack-trace');
 
@@ -24,6 +24,8 @@ if (process.env.BRANDFOLDER_API_KEY) {
   opts.headers.Authorization = `JWT ${process.env.BRANDFOLDER_API_KEY}`;
 }
 var api = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT, opts);
+
+api.addMiddleware(jsonApionifyLogger)
 
 console.log('loading organizations');
 api.resource('organizations').list().then(function({collection: organizations}) { // Get brandofolders relation

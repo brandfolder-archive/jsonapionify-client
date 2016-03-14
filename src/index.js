@@ -12,7 +12,25 @@ obj.JSONAPIonify = class {
   resource(name) {
     return new Resource(name, this);
   }
+
+  addMiddleware(...args) {
+    return this.client.addMiddleware(...args);
+  }
 };
 
+obj.jsonApionifyLogger = request => {
+  let start = new Date();
+  return response => {
+    let duration = (new Date() - start).toFixed(2);
+    console.log([
+      request.method,
+      request.url,
+      `${response.status}`,
+      '-',
+      `${duration} ms`
+    ].join(' '));
+    return response;
+  };
+};
 
 module.exports = obj;

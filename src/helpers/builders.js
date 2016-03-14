@@ -104,7 +104,7 @@ function buildCollectionWithResponse({ api, type } , { json, response }) {
     };
   }
   return api.client.options(uri).then(function ({ json: optionsJson }) {
-    var defaultResource = api.resource(optionsJson().meta.type);
+    var defaultResource = api.resource(optionsJson.meta.type);
     collection = new Collection(json, api, defaultResource);
     return {
       collection,

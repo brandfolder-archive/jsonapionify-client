@@ -1,17 +1,19 @@
-require('isomorphic-fetch');
-const Url = require('url');
-const parameterize = require('jquery-param');
-const fetch = require('isomorphic-fetch');
+import Request from './Request';
 
 class Client {
   constructor(baseUrl, { headers } = {}) {
     // Setup Headers
+    this.middlewares = [];
     this.headers = headers || {};
     this.headers['Content-Type'] = 'application/vnd.api+json';
     this.headers['Accept'] = 'application/vnd.api+json';
 
     // Set baseUrl
     this.baseUrl = baseUrl;
+  }
+
+  addMiddleware(func) {
+    this.middlewares.push(func);
   }
 
   // Invokes a GET against the API
@@ -45,72 +47,9 @@ class Client {
   }
 
   // Invokes a request again the API
-  request(method, path = '', data, params, { headers = {} } = {}) {
-    var requestUrl;
-    var body;
-
-    // Append params
-    if (params) {
-      path += `${path.match(/\?/) ? '&' : '?'}${parameterize(params)}`;
-    }
-
-    // Build the URL
-    if (Url.parse(path).host) {
-      requestUrl = path;
-    } else if (path.indexOf(this.baseUrl) !== -1) {
-      requestUrl = path;
-    } else {
-      requestUrl = [ this.baseUrl, path ].map(function (string) {
-        return string.replace(/\/$/, '');
-      }).join('/');
-    }
-
-    // Build the options
-    var headerKeys = Object.keys(headers).concat(Object.keys(this.headers));
-    headerKeys.forEach(function (key) {
-      headers[key] = (headers && headers[key]) || this.headers[key];
-    }, this);
-
-    // Overide DELETE if there is a body present
-    if (data) {
-      if (method.toLowerCase() === 'delete') {
-        headers['X-Http-Method-Override'] = method;
-        method = 'POST';
-      }
-      body = JSON.stringify(data);
-    }
-
-    // Return the response
-    return fetch(requestUrl, {
-      headers,
-      body,
-      method
-    }).then(function (response) {
-      return response.text().then(buildResponse.bind(this, response));
-    });
+  request(...args) {
+    return new Request(this, ...args).invoke();
   }
-}
-
-function buildResponse(
-  { ok, status, statusText, type, url, body, headers } , text
-) {
-  var parsedJson;
-  var json = function () {
-    parsedJson = parsedJson || JSON.parse(text);
-    return parsedJson;
-  };
-
-  return {
-    ok,
-    status,
-    statusText,
-    type,
-    url,
-    body,
-    headers,
-    text,
-    json
-  };
 }
 
 module.exports = Client;

@@ -134,7 +134,7 @@ function buildCollectionWithResponse(_ref8, _ref9) {
   return api.client.options(uri).then(function (_ref10) {
     let optionsJson = _ref10.json;
 
-    var defaultResource = api.resource(optionsJson().meta.type);
+    var defaultResource = api.resource(optionsJson.meta.type);
     collection = new Collection(json, api, defaultResource);
     return {
       collection,

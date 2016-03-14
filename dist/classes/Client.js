@@ -1,9 +1,10 @@
 'use strict';
 
-require('isomorphic-fetch');
-const Url = require('url');
-const parameterize = require('jquery-param');
-const fetch = require('isomorphic-fetch');
+var _Request = require('./Request');
+
+var _Request2 = _interopRequireDefault(_Request);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class Client {
   constructor(baseUrl) {
@@ -12,12 +13,17 @@ class Client {
     let headers = _ref.headers;
 
     // Setup Headers
+    this.middlewares = [];
     this.headers = headers || {};
     this.headers['Content-Type'] = 'application/vnd.api+json';
     this.headers['Accept'] = 'application/vnd.api+json';
 
     // Set baseUrl
     this.baseUrl = baseUrl;
+  }
+
+  addMiddleware(func) {
+    this.middlewares.push(func);
   }
 
   // Invokes a GET against the API
@@ -51,87 +57,13 @@ class Client {
   }
 
   // Invokes a request again the API
-  request(method) {
-    let path = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
-    let data = arguments[2];
-    let params = arguments[3];
-
-    var _ref2 = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
-
-    var _ref2$headers = _ref2.headers;
-    let headers = _ref2$headers === undefined ? {} : _ref2$headers;
-
-    var requestUrl;
-    var body;
-
-    // Append params
-    if (params) {
-      path += `${ path.match(/\?/) ? '&' : '?' }${ parameterize(params) }`;
+  request() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
     }
 
-    // Build the URL
-    if (Url.parse(path).host) {
-      requestUrl = path;
-    } else if (path.indexOf(this.baseUrl) !== -1) {
-      requestUrl = path;
-    } else {
-      requestUrl = [this.baseUrl, path].map(function (string) {
-        return string.replace(/\/$/, '');
-      }).join('/');
-    }
-
-    // Build the options
-    var headerKeys = Object.keys(headers).concat(Object.keys(this.headers));
-    headerKeys.forEach(function (key) {
-      headers[key] = headers && headers[key] || this.headers[key];
-    }, this);
-
-    // Overide DELETE if there is a body present
-    if (data) {
-      if (method.toLowerCase() === 'delete') {
-        headers['X-Http-Method-Override'] = method;
-        method = 'POST';
-      }
-      body = JSON.stringify(data);
-    }
-
-    // Return the response
-    return fetch(requestUrl, {
-      headers,
-      body,
-      method
-    }).then(function (response) {
-      return response.text().then(buildResponse.bind(this, response));
-    });
+    return new _Request2.default(this, ...args).invoke();
   }
-}
-
-function buildResponse(_ref3, text) {
-  let ok = _ref3.ok;
-  let status = _ref3.status;
-  let statusText = _ref3.statusText;
-  let type = _ref3.type;
-  let url = _ref3.url;
-  let body = _ref3.body;
-  let headers = _ref3.headers;
-
-  var parsedJson;
-  var json = function () {
-    parsedJson = parsedJson || JSON.parse(text);
-    return parsedJson;
-  };
-
-  return {
-    ok,
-    status,
-    statusText,
-    type,
-    url,
-    body,
-    headers,
-    text,
-    json
-  };
 }
 
 module.exports = Client;
