@@ -11,15 +11,20 @@ var _require2 = require('../errors');
 
 const NotPersistedError = _require2.NotPersistedError;
 
+var _require3 = require('../helpers/optionsCache');
+
+const optionsCache = _require3.optionsCache;
+
 const url = require('url');
 const _ = require('lodash');
+const path = require('path');
 
-var _require3 = require('../helpers/instanceActions');
+var _require4 = require('../helpers/instanceActions');
 
-const reloadInstance = _require3.reloadInstance;
-const patchInstance = _require3.patchInstance;
-const postInstance = _require3.postInstance;
-const deleteInstance = _require3.deleteInstance;
+const reloadInstance = _require4.reloadInstance;
+const patchInstance = _require4.patchInstance;
+const postInstance = _require4.postInstance;
+const deleteInstance = _require4.deleteInstance;
 
 
 class Instance extends ResourceIdentifier {
@@ -37,12 +42,11 @@ class Instance extends ResourceIdentifier {
     });
     this.api = api;
     this.collection = collection;
+    this.optionsCache = optionsCache.bind(this);
     this.attributes = Object.freeze(attributes || {});
     this.links = Object.freeze(links || {});
     this.meta = Object.freeze(meta || {});
     this.relationships = Object.freeze(relationships);
-
-    this.persisted = Boolean(this.links.self);
 
     Object.freeze(this);
   }
@@ -64,46 +68,75 @@ class Instance extends ResourceIdentifier {
     });
   }
 
+  get peristed() {
+    return Boolean(this.links.self);
+  }
+
   // Deletes an instance, returning a new instance with the same attributes, but
   // with no ID. The instance can be recreated by calling save() on the instance
   delete(params) {
     return this.checkPersistence().then(deleteInstance.bind(undefined, this, params));
   }
 
+  get resource() {
+    return this.api.resource(this.type);
+  }
+
+  optionsCacheKey() {
+    let parentKey;
+    let idKey = this.persisted && this.id ? ':id' : 'new';
+    if (this.collection && !this.id) {
+      parentKey = this.collection.optionsCacheKey();
+    } else {
+      parentKey = this.resource.optionsCacheKey();
+    }
+
+    for (var _len = arguments.length, additions = Array(_len), _key = 0; _key < _len; _key++) {
+      additions[_key] = arguments[_key];
+    }
+
+    return path.join(parentKey, idKey, ...additions);
+  }
+
   // Returns the request options
   options() {
-    return this.api.client.options(this.uri()).then(processResponse);
+    return this.optionsCache(() => {
+      setTimeout(() => delete this.optionsCache[this.optionsCacheKey()], 120);
+      return this.api.client.options(this.uri()).then(processResponse);
+    });
   }
 
   // Fetches the related collection or instance
   related(name, params) {
-    var _require4 = require('../helpers/builders');
+    var _require5 = require('../helpers/builders');
 
-    const buildCollectionOrInstance = _require4.buildCollectionOrInstance;
+    const buildCollectionOrInstance = _require5.buildCollectionOrInstance;
 
     return getRelationshipData(this, name).then(function (_ref2) {
       let data = _ref2.data;
       let api = _ref2.api;
 
       return api.client.get(data.links.related, params);
-    }).then(processResponse).then(buildCollectionOrInstance.bind(undefined, this));
+    }).then(processResponse).then(response => buildCollectionOrInstance(this, name, response));
   }
 
   // Gets options about the relation
-  relatedOptions(name, params) {
-    return getRelationshipData(this, name).then(function (_ref3) {
-      let data = _ref3.data;
-      let api = _ref3.api;
+  relatedOptions(name) {
+    return this.optionsCache(() => {
+      return getRelationshipData(this, name).then(function (_ref3) {
+        let data = _ref3.data;
+        let api = _ref3.api;
 
-      return api.client.options(data.links.related, params);
-    }).then(processResponse);
+        return api.client.options(data.links.related);
+      }).then(processResponse);
+    }, name);
   }
 
   // Fetches the relationship
   relationship(name, params) {
-    var _require5 = require('../helpers/builders');
+    var _require6 = require('../helpers/builders');
 
-    const buildOneOrManyRelationship = _require5.buildOneOrManyRelationship;
+    const buildOneOrManyRelationship = _require6.buildOneOrManyRelationship;
 
     return getRelationshipData(this, name).then(function (_ref4) {
       let data = _ref4.data;
@@ -158,9 +191,9 @@ class Instance extends ResourceIdentifier {
   // Writes the new attributes, returns an instance with the newly written
   // attributes
   writeAttributes(attributes) {
-    var _require6 = require('../helpers/builders');
+    var _require7 = require('../helpers/builders');
 
-    const buildInstanceWithAttributes = _require6.buildInstanceWithAttributes;
+    const buildInstanceWithAttributes = _require7.buildInstanceWithAttributes;
 
     var newAttributes = {};
     var keys = Object.keys(this.attributes).concat(Object.keys(attributes));

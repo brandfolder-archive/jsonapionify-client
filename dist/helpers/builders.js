@@ -6,42 +6,25 @@ const collectionWithInstance = _require.collectionWithInstance;
 const collectionWithoutInstance = _require.collectionWithoutInstance;
 
 
-function buildCollectionOrInstance(instance, _ref) {
-  let response = _ref.response;
-  let json = _ref.json;
+function buildCollectionOrInstance(instance, relName, response) {
   var api = instance.api;
   var links = instance.links;
+  var json = response.json;
 
   // Return the collection, we need to fetch the options to determine the
   // resource type
 
   if (json.data instanceof Array) {
-    return buildCollectionWithResponse({
-      api
-    }, {
-      response,
-      json
-    });
+    return buildRelatedCollectionWithResponse(instance, relName, response);
   } else if (json.data instanceof Object) {
-    return buildInstanceWithResponse({
-      api
-    }, {
-      response,
-      json
-    });
+    return buildInstanceWithResponse({ api }, response);
   } else if (json.data === null) {
-    return buildEmptyInstanceWithResponse({
-      api,
-      links
-    }, {
-      response,
-      json
-    });
+    return buildEmptyInstanceWithResponse({ api, links }, response);
   }
 }
 
-function buildOneOrManyRelationship(_ref2, response) {
-  let api = _ref2.api;
+function buildOneOrManyRelationship(_ref, response) {
+  let api = _ref.api;
 
   var ManyRelationship = require('../classes/ManyRelationship.js');
   var OneRelationship = require('../classes/OneRelationship.js');
@@ -63,13 +46,13 @@ function buildOneOrManyRelationship(_ref2, response) {
   };
 }
 
-function buildEmptyInstanceWithResponse(_ref3, response) {
-  let api = _ref3.api;
-  let links = _ref3.links;
+function buildEmptyInstanceWithResponse(_ref2, response) {
+  let api = _ref2.api;
+  let links = _ref2.links;
 
   var Instance = require('../classes/Instance.js');
-  return api.client.options(links.self).then(function (_ref4) {
-    let optionsJson = _ref4.json;
+  return api.client.options(links.self).then(function (_ref3) {
+    let optionsJson = _ref3.json;
 
     return new Instance({
       type: optionsJson.meta.type,
@@ -80,11 +63,11 @@ function buildEmptyInstanceWithResponse(_ref3, response) {
   });
 }
 
-function buildDeletedInstanceWithResponse(_ref5, response) {
-  let collection = _ref5.collection;
-  let type = _ref5.type;
-  let attributes = _ref5.attributes;
-  let api = _ref5.api;
+function buildDeletedInstanceWithResponse(_ref4, response) {
+  let collection = _ref4.collection;
+  let type = _ref4.type;
+  let attributes = _ref4.attributes;
+  let api = _ref4.api;
 
   var Instance = require('../classes/Instance.js');
   var instance = new Instance({
@@ -99,11 +82,11 @@ function buildDeletedInstanceWithResponse(_ref5, response) {
   };
 }
 
-function buildInstanceWithResponse(_ref6, _ref7) {
-  let collection = _ref6.collection;
-  let api = _ref6.api;
-  let json = _ref7.json;
-  let response = _ref7.response;
+function buildInstanceWithResponse(_ref5, _ref6) {
+  let collection = _ref5.collection;
+  let api = _ref5.api;
+  let json = _ref6.json;
+  let response = _ref6.response;
 
   var Instance = require('../classes/Instance.js');
   var instance = new Instance(json.data, api);
@@ -113,6 +96,23 @@ function buildInstanceWithResponse(_ref6, _ref7) {
     response,
     collection: newCollection
   };
+}
+
+function buildRelatedCollectionWithResponse(parent, relName, responseObj) {
+  var json = responseObj.json;
+  var response = responseObj.response;
+
+  var RelatedCollection = require('../classes/RelatedCollection.js');
+  return parent.relatedOptions(relName).then(function (_ref7) {
+    let optsJson = _ref7.json;
+
+    var defResource = parent.api.resource(optsJson.meta.type);
+    let collection = new RelatedCollection(json, parent, relName, defResource);
+    return {
+      collection,
+      response
+    };
+  });
 }
 
 function buildCollectionWithResponse(_ref8, _ref9) {

@@ -4,17 +4,24 @@ const processResponse = require('../helpers/processResponse.js');
 const Instance = require('./Instance.js');
 const Collection = require('./Collection.js');
 
-var _require = require('../helpers/builders');
+var _require = require('../helpers/optionsCache');
 
-const buildOneOrManyRelationship = _require.buildOneOrManyRelationship;
-const buildCollectionOrInstance = _require.buildCollectionOrInstance;
-const buildCollectionWithResponse = _require.buildCollectionWithResponse;
+const optionsCache = _require.optionsCache;
+
+const path = require('path');
+
+var _require2 = require('../helpers/builders');
+
+const buildOneOrManyRelationship = _require2.buildOneOrManyRelationship;
+const buildCollectionOrInstance = _require2.buildCollectionOrInstance;
+const buildCollectionWithResponse = _require2.buildCollectionWithResponse;
 
 
 module.exports = class Resource {
   constructor(type, api) {
     this.type = type;
     this.api = api;
+    this.optionsCache = optionsCache.bind(this);
     Object.freeze(this);
   }
 
@@ -32,7 +39,8 @@ module.exports = class Resource {
   }
 
   relatedForId(id, name, params) {
-    return this.api.client.get(`${ this.type }/${ id }/${ name }`, params).then(processResponse).then(buildCollectionOrInstance.bind(undefined, this));
+    let parentInstance = this.new({ id });
+    return this.api.client.get(`${ this.type }/${ id }/${ name }`, params).then(processResponse).then(response => buildCollectionOrInstance(parentInstance, name, response));
   }
 
   relationshipForId(id, name, params) {
@@ -49,6 +57,14 @@ module.exports = class Resource {
 
   uri() {
     return this.type;
+  }
+
+  optionsCacheKey() {
+    for (var _len = arguments.length, additions = Array(_len), _key = 0; _key < _len; _key++) {
+      additions[_key] = arguments[_key];
+    }
+
+    return path.join(this.type, ...additions);
   }
 
   options() {
