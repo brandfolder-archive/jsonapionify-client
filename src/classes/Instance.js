@@ -2,8 +2,10 @@ const ResourceIdentifier = require('./ResourceIdentifier');
 const processResponse = require('../helpers/processResponse');
 const { getRelationshipData } = require('../helpers/preparers');
 const { NotPersistedError } = require('../errors');
+const { optionsCache } = require('../helpers/optionsCache');
 const url = require('url');
 const _ = require('lodash');
+const path = require('path');
 const {
   reloadInstance, patchInstance, postInstance, deleteInstance
 } = require('../helpers/instanceActions');
@@ -18,12 +20,11 @@ class Instance extends ResourceIdentifier {
     });
     this.api = api;
     this.collection = collection;
+    this.optionsCache = optionsCache.bind(this);
     this.attributes = Object.freeze(attributes || {});
     this.links = Object.freeze(links || {});
     this.meta = Object.freeze(meta || {});
     this.relationships = Object.freeze(relationships);
-
-    this.persisted = Boolean(this.links.self);
 
     Object.freeze(this);
   }
@@ -45,6 +46,10 @@ class Instance extends ResourceIdentifier {
     });
   }
 
+  get peristed() {
+    return Boolean(this.links.self);
+  }
+
   // Deletes an instance, returning a new instance with the same attributes, but
   // with no ID. The instance can be recreated by calling save() on the instance
   delete(params) {
@@ -53,11 +58,29 @@ class Instance extends ResourceIdentifier {
     );
   }
 
+  get resource() {
+    return this.api.resource(this.type);
+  }
+
+  optionsCacheKey(...additions) {
+    let parentKey;
+    let idKey = this.persisted && this.id ? ':id' : 'new';
+    if (this.collection && !this.id) {
+      parentKey = this.collection.optionsCacheKey();
+    } else {
+      parentKey = this.resource.optionsCacheKey();
+    }
+    return path.join(parentKey, idKey, ...additions);
+  }
+
   // Returns the request options
   options() {
-    return this.api.client.options(this.uri()).then(
-      processResponse
-    );
+    return this.optionsCache(() => {
+      setTimeout(() => delete this.optionsCache[this.optionsCacheKey()], 120);
+      return this.api.client.options(this.uri()).then(
+        processResponse
+      );
+    });
   }
 
   // Fetches the related collection or instance
@@ -68,17 +91,19 @@ class Instance extends ResourceIdentifier {
     }).then(
       processResponse
     ).then(
-      buildCollectionOrInstance.bind(undefined, this)
+      response => buildCollectionOrInstance(this, name, response)
     );
   }
 
   // Gets options about the relation
-  relatedOptions(name, params) {
-    return getRelationshipData(this, name).then(function ({ data, api }) {
-      return api.client.options(data.links.related, params);
-    }).then(
-      processResponse
-    );
+  relatedOptions(name) {
+    return this.optionsCache(() => {
+      return getRelationshipData(this, name).then(function ({ data, api }) {
+        return api.client.options(data.links.related);
+      }).then(
+        processResponse
+      );
+    }, name);
   }
 
   // Fetches the relationship

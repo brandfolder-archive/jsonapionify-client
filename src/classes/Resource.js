@@ -1,6 +1,8 @@
 const processResponse = require('../helpers/processResponse.js');
 const Instance = require('./Instance.js');
 const Collection = require('./Collection.js');
+const { optionsCache } = require('../helpers/optionsCache');
+const path = require('path');
 const {
   buildOneOrManyRelationship,
   buildCollectionOrInstance, buildCollectionWithResponse
@@ -10,6 +12,7 @@ module.exports = class Resource {
   constructor(type, api) {
     this.type = type;
     this.api = api;
+    this.optionsCache = optionsCache.bind(this);
     Object.freeze(this);
   }
 
@@ -31,10 +34,11 @@ module.exports = class Resource {
   }
 
   relatedForId(id, name, params) {
+    let parentInstance = this.new({ id });
     return this.api.client.get(`${this.type}/${id}/${name}`, params).then(
       processResponse
     ).then(
-      buildCollectionOrInstance.bind(undefined, this)
+      response => buildCollectionOrInstance(parentInstance, name, response)
     );
   }
 
@@ -61,6 +65,10 @@ module.exports = class Resource {
 
   uri() {
     return this.type;
+  }
+
+  optionsCacheKey(...additions) {
+    return path.join(this.type, ...additions);
   }
 
   options() {

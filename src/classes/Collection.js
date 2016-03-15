@@ -1,6 +1,8 @@
 const Instance = require('./Instance.js');
 const processResponse = require('../helpers/processResponse.js');
 const url = require('url');
+const { optionsCache } = require('../helpers/optionsCache');
+const path = require('path');
 
 class Collection extends Array {
   constructor({ data, links, meta }, api, defaultResource) {
@@ -8,6 +10,7 @@ class Collection extends Array {
 
     this.api = api;
     this.defaultResource = defaultResource;
+    this.optionsCache = optionsCache.bind(this);
 
     this.links = Object.freeze(links || {});
     this.meta = Object.freeze(meta || {});
@@ -15,7 +18,9 @@ class Collection extends Array {
       this.push(new Instance(instanceData, api, this));
     }, this);
 
-    Object.freeze(this);
+    if (this.constructor === Collection) {
+      Object.freeze(this);
+    }
   }
 
   first() {
@@ -58,8 +63,17 @@ class Collection extends Array {
     });
   }
 
+  optionsCacheKey(...additions) {
+    if (this.defaultResource) {
+      return this.defaultResource.optionsCacheKey(...additions);
+    }
+    return path.join(this.uri(), ...additions);
+  }
+
   options(params) {
-    return this.api.client.options(this.uri(), params).then(processResponse);
+    return optionsCache(
+      () => this.api.client.options(this.uri(), params).then(processResponse)
+    );
   }
 
   reload(params) {

@@ -20,10 +20,19 @@ obj.JSONAPIonify = class {
 };
 
 obj.jsonApionifyLogger = request => {
+  var colors = require('colors');
+  var colormap = {
+    GET: 'green',
+    POST: 'green',
+    PUT: 'green',
+    PATCH: 'green',
+    DELETE: 'green',
+    OPTIONS: 'cyan'
+  }
   let start = new Date();
   return response => {
     let duration = (new Date() - start).toFixed(2);
-    console.log([request.method, request.url, `${ response.status }`, '-', `${ duration } ms`].join(' '));
+    console.log([request.method[colormap[request.method]], request.url, `${ response.status }`, '-', `${ duration } ms`].join(' '));
     return response;
   };
 };

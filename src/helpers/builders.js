@@ -2,33 +2,18 @@ const {
   collectionWithInstance, collectionWithoutInstance
 } = require('./collectionModifiers');
 
-function buildCollectionOrInstance(instance, { response, json }) {
+function buildCollectionOrInstance(instance, relName, response) {
   var { api, links } = instance;
+  var { json } = response;
 
 // Return the collection, we need to fetch the options to determine the
 // resource type
   if (json.data instanceof Array) {
-    return buildCollectionWithResponse({
-      api
-    }, {
-      response,
-      json
-    });
+    return buildRelatedCollectionWithResponse(instance, relName, response);
   } else if (json.data instanceof Object) {
-    return buildInstanceWithResponse({
-      api
-    }, {
-      response,
-      json
-    });
+    return buildInstanceWithResponse({ api }, response);
   } else if (json.data === null) {
-    return buildEmptyInstanceWithResponse({
-      api,
-      links
-    }, {
-      response,
-      json
-    });
+    return buildEmptyInstanceWithResponse({ api, links }, response);
   }
 }
 
@@ -90,6 +75,19 @@ function buildInstanceWithResponse({ collection, api } , { json, response }) {
     response,
     collection: newCollection
   };
+}
+
+function buildRelatedCollectionWithResponse(parent, relName, responseObj) {
+  var { json, response } = responseObj;
+  var RelatedCollection = require('../classes/RelatedCollection.js');
+  return parent.relatedOptions(relName).then(function ({ json: optsJson }) {
+    var defResource = parent.api.resource(optsJson.meta.type);
+    let collection = new RelatedCollection(json, parent, relName, defResource);
+    return {
+      collection,
+      response
+    };
+  });
 }
 
 function buildCollectionWithResponse({ api, type } , { json, response }) {
