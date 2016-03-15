@@ -72,8 +72,10 @@ obj.jsonApionifyLogger = request => {
     let { status } = response;
     let duration = (new Date() - start).toFixed(2);
     console.log([
+      ljust('JSONAPI', 10),
+      '|',
       colorMethod(method),
-      '->',
+      '>',
       colorStatus(status),
       '|',
       colorDuration(duration),
