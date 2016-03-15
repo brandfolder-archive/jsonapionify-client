@@ -2,7 +2,7 @@
 const Client = require('./classes/Client.js');
 const Resource = require('./classes/Resource.js');
 const obj = require('./errors');
-const { ljust, rjust } = require('string-just');
+const { ljust } = require('string-just');
 require('colors');
 
 obj.JSONAPIonify = class {

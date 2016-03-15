@@ -7,7 +7,6 @@ const obj = require('./errors');
 var _require = require('string-just');
 
 const ljust = _require.ljust;
-const rjust = _require.rjust;
 
 require('colors');
 
@@ -80,7 +79,7 @@ obj.jsonApionifyLogger = request => {
     let status = response.status;
 
     let duration = (new Date() - start).toFixed(2);
-    console.log([colorMethod(method), '->', colorStatus(status), '|', colorDuration(duration), '|', colorUrl(url)].join(' '));
+    console.log([ljust('JSONAPI', 10), '|', colorMethod(method), '>', colorStatus(status), '|', colorDuration(duration), '|', colorUrl(url)].join(' '));
     return response;
   };
 };
