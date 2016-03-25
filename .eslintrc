@@ -39,7 +39,6 @@
 
   "rules": {
     "babel/arrow-parens": [2, "as-needed"],
-
     "array-bracket-spacing": [2, "always", {"arraysInArrays": false}],
     "arrow-spacing": 2,
     "block-scoped-var": 0,
@@ -173,7 +172,7 @@
     "no-unused-vars": [2, {"vars": "all", "args": "after-used"}],
     "no-use-before-define": 0,
     "no-useless-call": 2,
-    "no-var": 0,
+    "no-var": 2,
     "no-void": 2,
     "no-warning-comments": 0,
     "no-with": 2,

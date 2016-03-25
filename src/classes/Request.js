@@ -1,8 +1,11 @@
-import Url from 'url';
-import parameterize from 'jquery-param';
+'use strict';
+
 import fetch from 'isomorphic-fetch';
-import Response from './Response';
+import parameterize from 'jquery-param';
 import Path from 'path';
+import Url from 'url';
+
+import Response from './Response';
 
 function parseParams(search) {
   if (!search) {
@@ -105,6 +108,7 @@ class Request {
   }
 
   invokeWithoutMiddlware() {
+    let client = this.client;
     let method = this.method;
     let headers = this.headers;
     let body = this.body;
@@ -115,9 +119,16 @@ class Request {
 
     return fetch(
       this.url, { headers, body, method }
-    ).then(
-      res => res.text().then(text => new Response(res, text))
-    );
+    ).then(res => {
+      let headersToSet = res.headers.get('x-jsonapionify-set-headers');
+      if (client.allowSetHeaders && headersToSet) {
+        headersToSet.split(',').forEach(value => {
+          let kv = value.split('=');
+          client.headers[kv[0]] = kv[1];
+        });
+      }
+      return res.text().then(text => new Response(res, text));
+    });
   }
 }
 

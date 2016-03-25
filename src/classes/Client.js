@@ -1,12 +1,14 @@
 import Request from './Request';
 
 class Client {
-  constructor(baseUrl, { headers } = {}) {
+  constructor(baseUrl, { allowSetHeaders = false, headers } = {}) {
     // Setup Headers
     this.middlewares = [];
-    this.headers = headers || {};
+    this.headers = {};
     this.headers['Content-Type'] = 'application/vnd.api+json';
     this.headers['Accept'] = 'application/vnd.api+json';
+    Object.assign(this.headers, headers);
+    this.allowSetHeaders = allowSetHeaders;
 
     // Set baseUrl
     this.baseUrl = baseUrl;
