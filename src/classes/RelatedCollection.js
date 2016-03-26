@@ -22,7 +22,7 @@ class RelatedCollection extends Collection {
   }
 
   reload(params) {
-    var { buildCollectionWithResponse } = require('../helpers/builders');
+    let { buildCollectionWithResponse } = require('../helpers/builders');
     return this.api.client.get(this.uri(), params).then(
       processResponse
     ).then(
@@ -31,7 +31,7 @@ class RelatedCollection extends Collection {
   }
 
   nextPage() {
-    var { buildCollectionWithResponse } = require('../helpers/builders');
+    let { buildCollectionWithResponse } = require('../helpers/builders');
     return this.api.client.get(this.links['next']).then(
       processResponse
     ).then(
@@ -40,7 +40,7 @@ class RelatedCollection extends Collection {
   }
 
   prevPage() {
-    var { buildCollectionWithResponse } = require('../helpers/builders');
+    let { buildCollectionWithResponse } = require('../helpers/builders');
     return this.api.client.get(this.links['prev']).then(
       processResponse
     ).then(
@@ -49,7 +49,7 @@ class RelatedCollection extends Collection {
   }
 
   firstPage() {
-    var { buildCollectionWithResponse } = require('../helpers/builders');
+    let { buildCollectionWithResponse } = require('../helpers/builders');
     return this.api.client.get(this.links['first']).then(
       processResponse
     ).then(
@@ -58,7 +58,7 @@ class RelatedCollection extends Collection {
   }
 
   lastPage() {
-    var { buildCollectionWithResponse } = require('../helpers/builders');
+    let { buildCollectionWithResponse } = require('../helpers/builders');
     return this.api.client.get(this.links['last']).then(
       processResponse
     ).then(
@@ -67,7 +67,7 @@ class RelatedCollection extends Collection {
   }
 
   uri(params = false) {
-    var u = url.parse(this.links.self || this.defaultResource.type);
+    let u = url.parse(this.links.self || this.defaultResource.type);
     if (!params) {
       u.search = undefined;
       u.query = undefined;

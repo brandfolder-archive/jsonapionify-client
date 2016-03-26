@@ -45,13 +45,13 @@ class Collection extends Array {
   }
 
   deleteAll(params) {
-    var { api, links, meta, defaultResource } = this;
+    let { api, links, meta, defaultResource } = this;
     return Promise.all(
       this.map(function (instance) {
         return instance.delete(params);
       })
     ).then(function (responses) {
-      var collection = new Collection({
+      let collection = new Collection({
         data: [],
         links,
         meta
@@ -77,7 +77,7 @@ class Collection extends Array {
   }
 
   reload(params) {
-    var { buildCollectionWithResponse } = require('../helpers/builders');
+    let { buildCollectionWithResponse } = require('../helpers/builders');
     return this.api.client.get(this.uri(), params).then(
       processResponse
     ).then(
@@ -86,7 +86,7 @@ class Collection extends Array {
   }
 
   nextPage() {
-    var { buildCollectionWithResponse } = require('../helpers/builders');
+    let { buildCollectionWithResponse } = require('../helpers/builders');
     return this.api.client.get(this.links['next']).then(
       processResponse
     ).then(
@@ -95,7 +95,7 @@ class Collection extends Array {
   }
 
   prevPage() {
-    var { buildCollectionWithResponse } = require('../helpers/builders');
+    let { buildCollectionWithResponse } = require('../helpers/builders');
     return this.api.client.get(this.links['prev']).then(
       processResponse
     ).then(
@@ -104,7 +104,7 @@ class Collection extends Array {
   }
 
   firstPage() {
-    var { buildCollectionWithResponse } = require('../helpers/builders');
+    let { buildCollectionWithResponse } = require('../helpers/builders');
     return this.api.client.get(this.links['first']).then(
       processResponse
     ).then(
@@ -113,7 +113,7 @@ class Collection extends Array {
   }
 
   lastPage() {
-    var { buildCollectionWithResponse } = require('../helpers/builders');
+    let { buildCollectionWithResponse } = require('../helpers/builders');
     return this.api.client.get(this.links['last']).then(
       processResponse
     ).then(
@@ -122,7 +122,7 @@ class Collection extends Array {
   }
 
   uri(params = false) {
-    var u = url.parse(this.links.self || this.defaultResource.type);
+    let u = url.parse(this.links.self || this.defaultResource.type);
     if (!params) {
       u.search = undefined;
       u.query = undefined;

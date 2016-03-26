@@ -7,15 +7,15 @@ class Client {
     // Setup Headers
     this.middlewares = [];
     headers = Object.keys(headers).reduce((obj, key) => {
-      let keyName = key.split('-').map(part => _.upperFirst(part)).join('-')
+      let keyName = key.split('-').map(part => _.upperFirst(part)).join('-');
       obj[keyName] = headers[key];
       return obj;
     }, {});
     this.headers = {
-      'Accept': headers['Accept'] || 'application/vnd.api+json',
-      'Content-Type': headers['Content-Type'] || 'application/vnd.api+json'
+      Accept: headers['Accept'] || 'application/vnd.api+json',
+      'Content-Type': headers['Content-Type'] || 'application/vnd.api+json',
+      ...headers
     };
-    this.headers = { ...this.headers, ...headers };
     this.allowSetHeaders = allowSetHeaders;
 
     // Set baseUrl

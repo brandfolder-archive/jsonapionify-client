@@ -32,8 +32,8 @@ class Instance extends ResourceIdentifier {
   // Checks whether or not the instance is persisted using a very
   // small response body
   checkPersistence() {
-    var instance = this;
-    var params = {
+    let instance = this;
+    let params = {
       fields: {},
       'include-relationships': false
     };
@@ -125,7 +125,7 @@ class Instance extends ResourceIdentifier {
 
   // Saves the instance, returns a new object with the saved data.
   save(params) {
-    var instance = this;
+    let instance = this;
     return this.checkPersistence().then(function () {
       return patchInstance(instance, params);
     }).catch(function (error) { // Create the instance
@@ -144,10 +144,10 @@ class Instance extends ResourceIdentifier {
   }
 
   uri(params = false) {
-    var selfUri = this.links.self;
-    var parentUri = this.collection && this.collection.uri(false);
-    var resourceUri = _.compact([ this.type, this.id ]).join('/');
-    var u = url.parse(selfUri || parentUri || resourceUri);
+    let selfUri = this.links.self;
+    let parentUri = this.collection && this.collection.uri(false);
+    let resourceUri = _.compact([ this.type, this.id ]).join('/');
+    let u = url.parse(selfUri || parentUri || resourceUri);
     if (!params) {
       u.search = undefined;
       u.query = undefined;
@@ -159,8 +159,8 @@ class Instance extends ResourceIdentifier {
   // attributes
   writeAttributes(attributes) {
     const { buildInstanceWithAttributes } = require('../helpers/builders');
-    var newAttributes = {};
-    var keys = Object.keys(this.attributes).concat(Object.keys(attributes));
+    let newAttributes = {};
+    let keys = Object.keys(this.attributes).concat(Object.keys(attributes));
     keys.forEach(function (key) {
       if (attributes[key] !== undefined) {
         newAttributes[key] = attributes[key];

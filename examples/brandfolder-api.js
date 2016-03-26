@@ -7,7 +7,7 @@ function logError(error) {
   console.error('');
 
   error = error.error !== undefined ? error.error : error;
-  var stack = stackTrace.parse(error);
+  let stack = stackTrace.parse(error);
   console.error(error.toString());
   stack.forEach(function(trace, index) {
     console.error(`${index}: ${trace.getFileName()}:${trace.getLineNumber()}:in ${trace.getFunctionName()}`);
@@ -16,14 +16,14 @@ function logError(error) {
   console.error('');
 };
 
-var opts = {
+let opts = {
   headers: {}
 };
 
 if (process.env.BRANDFOLDER_API_KEY) {
   opts.headers.Authorization = `JWT ${process.env.BRANDFOLDER_API_KEY}`;
 }
-var api = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT, opts);
+let api = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT, opts);
 
 api.addMiddleware(jsonApionifyLogger)
 
@@ -72,7 +72,7 @@ api.resource('organizations').list().then(function({collection: organizations}) 
 }).then(function({collection: assets}) { // Create Some Assets
   console.log('create assets');
   return Promise.all(_.times(3, function(i) {
-    var count = i + 1;
+    let count = i + 1;
     console.log('create asset');
     return assets.create({
       attributes: {
@@ -115,8 +115,8 @@ api.resource('organizations').list().then(function({collection: organizations}) 
     return asset.related('brandfolder');
   });
 }).then(function({instance: brandfolder}) {
-  var publicApi = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT);
-  var i = 0;
+  let publicApi = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT);
+  let i = 0;
   return Promise.all(_.times(2, function() {
     return publicApi.resource('users').create({
       attributes: {
@@ -125,7 +125,7 @@ api.resource('organizations').list().then(function({collection: organizations}) 
       }
     });
   })).then(function(results) {
-    var users = results.map(function({instance: user}) {
+    let users = results.map(function({instance: user}) {
       return user;
     });
     return brandfolder.relationship('admins').then(function({relationship: admins}) {

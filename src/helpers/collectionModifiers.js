@@ -5,9 +5,9 @@ function collectionWithoutInstance(collection, instance) {
   if (!(collection instanceof Collection) || !instance) {
     return collection;
   }
-  var instanceIndex = collection.indexOf(instance);
-  var data = Array.of(...collection).splice(0, instanceIndex);
-  var { links, meta } = collection;
+  let instanceIndex = collection.indexOf(instance);
+  let data = Array.of(...collection).splice(0, instanceIndex);
+  let { links, meta } = collection;
   return new Collection({
     data,
     links,
@@ -19,8 +19,8 @@ function collectionWithInstance(collection, instance) {
   if (!(collection instanceof Collection) || !instance) {
     return collection;
   }
-  var data = Array.of(...collection, instance);
-  var { links, meta } = collection;
+  let data = Array.of(...collection, instance);
+  let { links, meta } = collection;
   return new Collection({
     data,
     links,

@@ -17,7 +17,7 @@ function modifyRelationship({ api, links } , items, action, params) {
   return api.client[action](links.self, {
     data: itemsToResourceIdentifiers(items)
   }, params).then(processResponse).then(function (response) {
-    var relationship = new ManyRelationship({
+    let relationship = new ManyRelationship({
       api
     }, response);
     return {

@@ -46,7 +46,7 @@ function logError(error) {
   console.error('');
 
   error = error.error !== undefined ? error.error : error;
-  var stack = stackTrace.parse(error);
+  let stack = stackTrace.parse(error);
   console.error(error.toString());
   stack.forEach(function(trace, index) {
     console.error(`${index}: ${trace.getFileName()}:${trace.getLineNumber()}:in ${trace.getFunctionName()}`);
