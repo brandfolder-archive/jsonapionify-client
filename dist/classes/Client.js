@@ -1,5 +1,11 @@
 'use strict';
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _Request = require('./Request');
 
 var _Request2 = _interopRequireDefault(_Request);
@@ -10,13 +16,20 @@ class Client {
   constructor(baseUrl) {
     var _ref = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-    let headers = _ref.headers;
+    var _ref$allowSetHeaders = _ref.allowSetHeaders;
+    let allowSetHeaders = _ref$allowSetHeaders === undefined ? false : _ref$allowSetHeaders;
+    var _ref$headers = _ref.headers;
+    let headers = _ref$headers === undefined ? {} : _ref$headers;
 
     // Setup Headers
     this.middlewares = [];
-    this.headers = headers || {};
-    this.headers['Content-Type'] = 'application/vnd.api+json';
-    this.headers['Accept'] = 'application/vnd.api+json';
+    headers = Object.keys(headers).reduce((o, k) => o[k.split('-').map(p => _lodash2.default.upperFirst(p)).join('-')] = headers[k], {});
+    this.headers = {
+      'Accept': headers['Accept'] || 'application/vnd.api+json',
+      'Content-Type': headers['Content-Type'] || 'application/vnd.api+json'
+    };
+    this.headers = _extends({}, this.headers, headers);
+    this.allowSetHeaders = allowSetHeaders;
 
     // Set baseUrl
     this.baseUrl = baseUrl;

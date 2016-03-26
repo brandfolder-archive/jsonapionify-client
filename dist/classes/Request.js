@@ -6,25 +6,25 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _url = require('url');
+var _isomorphicFetch = require('isomorphic-fetch');
 
-var _url2 = _interopRequireDefault(_url);
+var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
 
 var _jqueryParam = require('jquery-param');
 
 var _jqueryParam2 = _interopRequireDefault(_jqueryParam);
 
-var _isomorphicFetch = require('isomorphic-fetch');
+var _path = require('path');
 
-var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
+var _path2 = _interopRequireDefault(_path);
+
+var _url = require('url');
+
+var _url2 = _interopRequireDefault(_url);
 
 var _Response = require('./Response');
 
 var _Response2 = _interopRequireDefault(_Response);
-
-var _path = require('path');
-
-var _path2 = _interopRequireDefault(_path);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -125,6 +125,7 @@ class Request {
   }
 
   invokeWithoutMiddlware() {
+    let client = this.client;
     let method = this.method;
     let headers = this.headers;
     let body = this.body;
@@ -133,7 +134,16 @@ class Request {
       method = 'POST';
     }
 
-    return (0, _isomorphicFetch2.default)(this.url, { headers, body, method }).then(res => res.text().then(text => new _Response2.default(res, text)));
+    return (0, _isomorphicFetch2.default)(this.url, { headers, body, method }).then(res => {
+      let headersToSet = res.headers.get('x-jsonapionify-set-headers');
+      if (client.allowSetHeaders && headersToSet) {
+        headersToSet.split(',').forEach(value => {
+          let kv = value.split('=');
+          client.headers[kv[0]] = kv[1];
+        });
+      }
+      return res.text().then(text => new _Response2.default(res, text));
+    });
   }
 }
 

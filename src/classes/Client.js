@@ -1,13 +1,21 @@
+import _ from 'lodash';
+
 import Request from './Request';
 
 class Client {
-  constructor(baseUrl, { allowSetHeaders = false, headers } = {}) {
+  constructor(baseUrl, { allowSetHeaders = false, headers = {} } = {}) {
     // Setup Headers
     this.middlewares = [];
-    this.headers = {};
-    this.headers['Content-Type'] = 'application/vnd.api+json';
-    this.headers['Accept'] = 'application/vnd.api+json';
-    Object.assign(this.headers, headers);
+    headers = Object.keys(headers).reduce((obj, key) => {
+      let keyName = key.split('-').map(part => _.upperFirst(part)).join('-')
+      obj[keyName] = headers[key];
+      return obj;
+    }, {});
+    this.headers = {
+      'Accept': headers['Accept'] || 'application/vnd.api+json',
+      'Content-Type': headers['Content-Type'] || 'application/vnd.api+json'
+    };
+    this.headers = { ...this.headers, ...headers };
     this.allowSetHeaders = allowSetHeaders;
 
     // Set baseUrl
