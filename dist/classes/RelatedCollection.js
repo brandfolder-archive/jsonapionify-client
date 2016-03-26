@@ -34,7 +34,7 @@ class RelatedCollection extends Collection {
   reload(params) {
     var _require = require('../helpers/builders');
 
-    var buildCollectionWithResponse = _require.buildCollectionWithResponse;
+    let buildCollectionWithResponse = _require.buildCollectionWithResponse;
 
     return this.api.client.get(this.uri(), params).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
   }
@@ -42,7 +42,7 @@ class RelatedCollection extends Collection {
   nextPage() {
     var _require2 = require('../helpers/builders');
 
-    var buildCollectionWithResponse = _require2.buildCollectionWithResponse;
+    let buildCollectionWithResponse = _require2.buildCollectionWithResponse;
 
     return this.api.client.get(this.links['next']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
   }
@@ -50,7 +50,7 @@ class RelatedCollection extends Collection {
   prevPage() {
     var _require3 = require('../helpers/builders');
 
-    var buildCollectionWithResponse = _require3.buildCollectionWithResponse;
+    let buildCollectionWithResponse = _require3.buildCollectionWithResponse;
 
     return this.api.client.get(this.links['prev']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
   }
@@ -58,7 +58,7 @@ class RelatedCollection extends Collection {
   firstPage() {
     var _require4 = require('../helpers/builders');
 
-    var buildCollectionWithResponse = _require4.buildCollectionWithResponse;
+    let buildCollectionWithResponse = _require4.buildCollectionWithResponse;
 
     return this.api.client.get(this.links['first']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
   }
@@ -66,7 +66,7 @@ class RelatedCollection extends Collection {
   lastPage() {
     var _require5 = require('../helpers/builders');
 
-    var buildCollectionWithResponse = _require5.buildCollectionWithResponse;
+    let buildCollectionWithResponse = _require5.buildCollectionWithResponse;
 
     return this.api.client.get(this.links['last']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
   }
@@ -74,7 +74,7 @@ class RelatedCollection extends Collection {
   uri() {
     let params = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
-    var u = url.parse(this.links.self || this.defaultResource.type);
+    let u = url.parse(this.links.self || this.defaultResource.type);
     if (!params) {
       u.search = undefined;
       u.query = undefined;

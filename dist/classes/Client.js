@@ -23,12 +23,15 @@ class Client {
 
     // Setup Headers
     this.middlewares = [];
-    headers = Object.keys(headers).reduce((o, k) => o[k.split('-').map(p => _lodash2.default.upperFirst(p)).join('-')] = headers[k], {});
-    this.headers = {
-      'Accept': headers['Accept'] || 'application/vnd.api+json',
+    headers = Object.keys(headers).reduce((obj, key) => {
+      let keyName = key.split('-').map(part => _lodash2.default.upperFirst(part)).join('-');
+      obj[keyName] = headers[key];
+      return obj;
+    }, {});
+    this.headers = _extends({
+      Accept: headers['Accept'] || 'application/vnd.api+json',
       'Content-Type': headers['Content-Type'] || 'application/vnd.api+json'
-    };
-    this.headers = _extends({}, this.headers, headers);
+    }, headers);
     this.allowSetHeaders = allowSetHeaders;
 
     // Set baseUrl

@@ -59,15 +59,15 @@ class Collection extends Array {
   }
 
   deleteAll(params) {
-    var api = this.api;
-    var links = this.links;
-    var meta = this.meta;
-    var defaultResource = this.defaultResource;
+    let api = this.api;
+    let links = this.links;
+    let meta = this.meta;
+    let defaultResource = this.defaultResource;
 
     return Promise.all(this.map(function (instance) {
       return instance.delete(params);
     })).then(function (responses) {
-      var collection = new Collection({
+      let collection = new Collection({
         data: [],
         links,
         meta
@@ -97,7 +97,7 @@ class Collection extends Array {
   reload(params) {
     var _require2 = require('../helpers/builders');
 
-    var buildCollectionWithResponse = _require2.buildCollectionWithResponse;
+    let buildCollectionWithResponse = _require2.buildCollectionWithResponse;
 
     return this.api.client.get(this.uri(), params).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
   }
@@ -105,7 +105,7 @@ class Collection extends Array {
   nextPage() {
     var _require3 = require('../helpers/builders');
 
-    var buildCollectionWithResponse = _require3.buildCollectionWithResponse;
+    let buildCollectionWithResponse = _require3.buildCollectionWithResponse;
 
     return this.api.client.get(this.links['next']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
   }
@@ -113,7 +113,7 @@ class Collection extends Array {
   prevPage() {
     var _require4 = require('../helpers/builders');
 
-    var buildCollectionWithResponse = _require4.buildCollectionWithResponse;
+    let buildCollectionWithResponse = _require4.buildCollectionWithResponse;
 
     return this.api.client.get(this.links['prev']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
   }
@@ -121,7 +121,7 @@ class Collection extends Array {
   firstPage() {
     var _require5 = require('../helpers/builders');
 
-    var buildCollectionWithResponse = _require5.buildCollectionWithResponse;
+    let buildCollectionWithResponse = _require5.buildCollectionWithResponse;
 
     return this.api.client.get(this.links['first']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
   }
@@ -129,7 +129,7 @@ class Collection extends Array {
   lastPage() {
     var _require6 = require('../helpers/builders');
 
-    var buildCollectionWithResponse = _require6.buildCollectionWithResponse;
+    let buildCollectionWithResponse = _require6.buildCollectionWithResponse;
 
     return this.api.client.get(this.links['last']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
   }
@@ -137,7 +137,7 @@ class Collection extends Array {
   uri() {
     let params = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
-    var u = url.parse(this.links.self || this.defaultResource.type);
+    let u = url.parse(this.links.self || this.defaultResource.type);
     if (!params) {
       u.search = undefined;
       u.query = undefined;

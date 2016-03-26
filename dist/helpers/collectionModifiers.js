@@ -7,10 +7,10 @@ function collectionWithoutInstance(collection, instance) {
   if (!(collection instanceof Collection) || !instance) {
     return collection;
   }
-  var instanceIndex = collection.indexOf(instance);
-  var data = Array.of(...collection).splice(0, instanceIndex);
-  var links = collection.links;
-  var meta = collection.meta;
+  let instanceIndex = collection.indexOf(instance);
+  let data = Array.of(...collection).splice(0, instanceIndex);
+  let links = collection.links;
+  let meta = collection.meta;
 
   return new Collection({
     data,
@@ -23,9 +23,9 @@ function collectionWithInstance(collection, instance) {
   if (!(collection instanceof Collection) || !instance) {
     return collection;
   }
-  var data = Array.of(...collection, instance);
-  var links = collection.links;
-  var meta = collection.meta;
+  let data = Array.of(...collection, instance);
+  let links = collection.links;
+  let meta = collection.meta;
 
   return new Collection({
     data,

@@ -21,7 +21,7 @@ module.exports = class OneRelationship extends ResourceIdentifier {
     this.client.patch(this.links.self, {
       data: item ? item.resourceIdentifier : null
     }, params).then(processResponse).then(function (response) {
-      var relationship = new OneRelationship(relationship, response);
+      let relationship = new OneRelationship(relationship, response);
       return {
         relationship,
         response

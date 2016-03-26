@@ -15,10 +15,10 @@ const NotPersistedError = _require2.NotPersistedError;
 function reloadInstance(instance, params) {
   var _require3 = require('./builders');
 
-  var buildInstanceWithResponse = _require3.buildInstanceWithResponse;
+  let buildInstanceWithResponse = _require3.buildInstanceWithResponse;
 
-  var uri = instance.uri();
-  var collectionUri = instance.collection && instance.collection.uri();
+  let uri = instance.uri();
+  let collectionUri = instance.collection && instance.collection.uri();
   if (uri === undefined || uri === collectionUri || instance.id === undefined) {
     return Promise.reject(new NotPersistedError('Instance is not persisted'));
   }
@@ -33,7 +33,7 @@ function reloadInstance(instance, params) {
 function deleteInstance(instance, params) {
   var _require4 = require('./builders');
 
-  var buildDeletedInstanceWithResponse = _require4.buildDeletedInstanceWithResponse;
+  let buildDeletedInstanceWithResponse = _require4.buildDeletedInstanceWithResponse;
 
   return instance.api.client.delete(instance.links.self, params).then(buildDeletedInstanceWithResponse.bind(undefined, instance));
 }
@@ -41,7 +41,7 @@ function deleteInstance(instance, params) {
 function patchInstance(instance, params) {
   var _require5 = require('./builders');
 
-  var buildInstanceWithResponse = _require5.buildInstanceWithResponse;
+  let buildInstanceWithResponse = _require5.buildInstanceWithResponse;
 
   return prepareInstanceRequestBodyFor(instance, 'PATCH').then(function (body) {
     return instance.api.client.patch(instance.uri(), body, params).then(processResponse).then(buildInstanceWithResponse.bind(undefined, instance));
@@ -51,7 +51,7 @@ function patchInstance(instance, params) {
 function postInstance(instance, params) {
   var _require6 = require('./builders');
 
-  var buildInstanceWithResponse = _require6.buildInstanceWithResponse;
+  let buildInstanceWithResponse = _require6.buildInstanceWithResponse;
 
   return prepareInstanceRequestBodyFor(instance, 'POST').then(function (body) {
     return instance.api.client.post(instance.uri(), body, params).then(processResponse).then(buildInstanceWithResponse.bind(undefined, instance));

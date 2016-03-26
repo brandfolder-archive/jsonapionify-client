@@ -1,9 +1,9 @@
 'use strict';
 
 function buildHttpError(statusCode) {
-  var baseClassName = `HTTPError${ (i - i % 100) / 100 }xx`;
+  let baseClassName = `HTTPError${ (statusCode - statusCode % 100) / 100 }xx`;
 
-  if (i % 100 === 0) {
+  if (statusCode % 100 === 0) {
     classes[baseClassName] = class extends classes.HTTPError {
       constructor(message, fileName, lineNumber) {
         super(message, fileName, lineNumber);
@@ -11,7 +11,7 @@ function buildHttpError(statusCode) {
     };
   }
 
-  classes[`HTTPError${ i }`] = class extends classes[baseClassName] {
+  classes[`HTTPError${ statusCode }`] = class extends classes[baseClassName] {
     constructor(message, fileName, lineNumber) {
       super(message, fileName, lineNumber);
       this.statusCode = statusCode;
@@ -29,11 +29,11 @@ classes.HTTPError = class extends Error {
   }
 };
 
-for (var i = 400; i <= 599; i++) {
+for (let i = 400; i <= 599; i++) {
   buildHttpError(i);
 }
 
-var errorNames = ['InvalidRelationshipError', 'NotPersistedError', 'VerbUnsupportedError'];
+let errorNames = ['InvalidRelationshipError', 'NotPersistedError', 'VerbUnsupportedError'];
 errorNames.forEach(function (errorName) {
   classes[errorName] = class extends Error {
     constructor() {

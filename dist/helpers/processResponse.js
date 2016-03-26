@@ -4,7 +4,7 @@ const Errors = require('../errors.js');
 
 function errorsToMessage(errors) {
   return errors.map(function (error) {
-    var msg = '';
+    let msg = '';
     if (error.status) {
       msg += error.status;
     }
@@ -20,10 +20,10 @@ function errorsToMessage(errors) {
 
 function processResponse(response) {
   return new Promise(function (resolve, reject) {
-    var json = response.json;
+    let json = response.json;
     if (json.errors) {
-      var message = errorsToMessage(json.errors);
-      var error = new Errors[`HTTPError${ response.status }`](message);
+      let message = errorsToMessage(json.errors);
+      let error = new Errors[`HTTPError${ response.status }`](message);
       reject({
         error,
         response

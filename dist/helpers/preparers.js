@@ -11,14 +11,14 @@ function prepareInstanceRequestBodyFor(instance, verb) {
   return instance.options().then(function (_ref) {
     let json = _ref.json;
 
-    var attributes = {};
+    let attributes = {};
     if (json.meta.requests[verb] === undefined) {
       throw new VerbUnsupportedError(`'${ instance.uri() }' does not support '${ verb }'`);
     }
     json.meta.requests[verb].attributes.forEach(function (attribute) {
       attributes[attribute.name] = instance.attributes[attribute.name];
     });
-    var body = {
+    let body = {
       data: {
         type: instance.type,
         attributes
@@ -32,15 +32,15 @@ function prepareInstanceRequestBodyFor(instance, verb) {
 }
 
 function getRelationshipData(instance, name) {
-  var error = new InvalidRelationshipError(`${ name } is not a valid relationship`);
-  var api = instance.api;
-  var relationships = instance.relationships;
+  let error = new InvalidRelationshipError(`${ name } is not a valid relationship`);
+  let api = instance.api;
+  let relationships = instance.relationships;
 
   if (instance.relationships === undefined) {
     return instance.reload({ 'include-relationships': true }).then(function (_ref2) {
       let reloadedInstance = _ref2.instance;
 
-      var data = reloadedInstance.relationships[name];
+      let data = reloadedInstance.relationships[name];
       if (data === undefined) {
         throw error;
       }
@@ -50,7 +50,7 @@ function getRelationshipData(instance, name) {
       };
     });
   }
-  var data = relationships[name];
+  let data = relationships[name];
   if (data === undefined) {
     throw error;
   }
