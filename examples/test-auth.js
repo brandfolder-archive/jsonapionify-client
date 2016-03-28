@@ -53,6 +53,7 @@ function logError(error) {
   });
 
   console.error('');
+  process.exit(0)
 };
 
 console.log("test signin")
@@ -63,6 +64,7 @@ login().then(({ instance }) => {
 }).then(
   ({ instance }) => console.log(instance.attributes)
 ).then(() => {
+  api.client.headers.authorization = '';
   console.log("test user signup")
   let email = `hello+${new Date() * 1}@example.org`;
   let password = 'testing123';
@@ -74,4 +76,4 @@ login().then(({ instance }) => {
   return api.resource('users').read('current')
 }).then(
   ({ instance }) => console.log(instance.attributes)
-).catch(logError)
+).then(() => process.exit(0)).catch(logError)
