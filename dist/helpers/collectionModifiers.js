@@ -1,10 +1,14 @@
 'use strict';
 
-const Collection = require('../classes/Collection');
+var _Collection = require('../classes/Collection');
+
+var _Collection2 = _interopRequireDefault(_Collection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Collection Modifiers
 function collectionWithoutInstance(collection, instance) {
-  if (!(collection instanceof Collection) || !instance) {
+  if (!(collection instanceof _Collection2.default) || !instance) {
     return collection;
   }
   let instanceIndex = collection.indexOf(instance);
@@ -12,7 +16,7 @@ function collectionWithoutInstance(collection, instance) {
   let links = collection.links;
   let meta = collection.meta;
 
-  return new Collection({
+  return new _Collection2.default({
     data,
     links,
     meta
@@ -20,14 +24,14 @@ function collectionWithoutInstance(collection, instance) {
 }
 
 function collectionWithInstance(collection, instance) {
-  if (!(collection instanceof Collection) || !instance) {
+  if (!(collection instanceof _Collection2.default) || !instance) {
     return collection;
   }
   let data = Array.of(...collection, instance);
   let links = collection.links;
   let meta = collection.meta;
 
-  return new Collection({
+  return new _Collection2.default({
     data,
     links,
     meta

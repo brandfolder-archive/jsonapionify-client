@@ -1,10 +1,20 @@
 'use strict';
 
-const Collection = require('./Collection.js');
-const processResponse = require('../helpers/processResponse.js');
-const url = require('url');
+var _url = require('url');
 
-class RelatedCollection extends Collection {
+var _url2 = _interopRequireDefault(_url);
+
+var _processResponse = require('../helpers/processResponse.js');
+
+var _processResponse2 = _interopRequireDefault(_processResponse);
+
+var _Collection = require('./Collection.js');
+
+var _Collection2 = _interopRequireDefault(_Collection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class RelatedCollection extends _Collection2.default {
   constructor(_ref, parent, relName, defaultResource) {
     let data = _ref.data;
     let links = _ref.links;
@@ -28,7 +38,7 @@ class RelatedCollection extends Collection {
   }
 
   options(params) {
-    return this.api.client.options(this.uri(), params).then(processResponse);
+    return this.api.client.options(this.uri(), params).then(_processResponse2.default);
   }
 
   reload(params) {
@@ -36,7 +46,7 @@ class RelatedCollection extends Collection {
 
     let buildCollectionWithResponse = _require.buildCollectionWithResponse;
 
-    return this.api.client.get(this.uri(), params).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
+    return this.api.client.get(this.uri(), params).then(_processResponse2.default).then(buildCollectionWithResponse.bind(undefined, this));
   }
 
   nextPage() {
@@ -44,7 +54,7 @@ class RelatedCollection extends Collection {
 
     let buildCollectionWithResponse = _require2.buildCollectionWithResponse;
 
-    return this.api.client.get(this.links['next']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
+    return this.api.client.get(this.links['next']).then(_processResponse2.default).then(buildCollectionWithResponse.bind(undefined, this));
   }
 
   prevPage() {
@@ -52,7 +62,7 @@ class RelatedCollection extends Collection {
 
     let buildCollectionWithResponse = _require3.buildCollectionWithResponse;
 
-    return this.api.client.get(this.links['prev']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
+    return this.api.client.get(this.links['prev']).then(_processResponse2.default).then(buildCollectionWithResponse.bind(undefined, this));
   }
 
   firstPage() {
@@ -60,7 +70,7 @@ class RelatedCollection extends Collection {
 
     let buildCollectionWithResponse = _require4.buildCollectionWithResponse;
 
-    return this.api.client.get(this.links['first']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
+    return this.api.client.get(this.links['first']).then(_processResponse2.default).then(buildCollectionWithResponse.bind(undefined, this));
   }
 
   lastPage() {
@@ -68,13 +78,13 @@ class RelatedCollection extends Collection {
 
     let buildCollectionWithResponse = _require5.buildCollectionWithResponse;
 
-    return this.api.client.get(this.links['last']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
+    return this.api.client.get(this.links['last']).then(_processResponse2.default).then(buildCollectionWithResponse.bind(undefined, this));
   }
 
   uri() {
     let params = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
-    let u = url.parse(this.links.self || this.defaultResource.type);
+    let u = _url2.default.parse(this.links.self || this.defaultResource.type);
     if (!params) {
       u.search = undefined;
       u.query = undefined;

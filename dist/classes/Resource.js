@@ -1,50 +1,55 @@
 'use strict';
 
-const processResponse = require('../helpers/processResponse.js');
-const Instance = require('./Instance.js');
-const Collection = require('./Collection.js');
+var _path = require('path');
 
-var _require = require('../helpers/optionsCache');
+var _path2 = _interopRequireDefault(_path);
 
-const optionsCache = _require.optionsCache;
+var _processResponse = require('../helpers/processResponse.js');
 
-const path = require('path');
+var _processResponse2 = _interopRequireDefault(_processResponse);
 
-var _require2 = require('../helpers/builders');
+var _Collection = require('./Collection.js');
 
-const buildOneOrManyRelationship = _require2.buildOneOrManyRelationship;
-const buildCollectionOrInstance = _require2.buildCollectionOrInstance;
-const buildCollectionWithResponse = _require2.buildCollectionWithResponse;
+var _Collection2 = _interopRequireDefault(_Collection);
 
+var _Instance = require('./Instance.js');
+
+var _Instance2 = _interopRequireDefault(_Instance);
+
+var _builders = require('../helpers/builders');
+
+var _optionsCache = require('../helpers/optionsCache');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 module.exports = class Resource {
   constructor(type, api) {
     this.type = type;
     this.api = api;
-    this.optionsCache = optionsCache.bind(this);
+    this.optionsCache = _optionsCache.optionsCache.bind(this);
     Object.freeze(this);
   }
 
   list(params) {
-    return this.api.client.get(this.type, params).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
+    return this.api.client.get(this.type, params).then(_processResponse2.default).then(_builders.buildCollectionWithResponse.bind(undefined, this));
   }
 
   emptyCollection() {
-    return new Collection({}, this.api, this);
+    return new _Collection2.default({}, this.api, this);
   }
 
   new(instanceData) {
     instanceData.type = this.type;
-    return new Instance(instanceData, this.api);
+    return new _Instance2.default(instanceData, this.api);
   }
 
   relatedForId(id, name, params) {
     let parentInstance = this.new({ id });
-    return this.api.client.get(`${ this.type }/${ id }/${ name }`, params).then(processResponse).then(response => buildCollectionOrInstance(parentInstance, name, response));
+    return this.api.client.get(`${ this.type }/${ id }/${ name }`, params).then(_processResponse2.default).then(response => (0, _builders.buildCollectionOrInstance)(parentInstance, name, response));
   }
 
   relationshipForId(id, name, params) {
-    return this.api.client.get(`${ this.type }/${ id }/relationships/${ name }`, params).then(processResponse).then(buildOneOrManyRelationship.bind(undefined, this));
+    return this.api.client.get(`${ this.type }/${ id }/relationships/${ name }`, params).then(_processResponse2.default).then(_builders.buildOneOrManyRelationship.bind(undefined, this));
   }
 
   create(instanceData, params) {
@@ -52,7 +57,7 @@ module.exports = class Resource {
   }
 
   read(id, params) {
-    return new Instance({ type: this.type, id }, this.api).reload(params);
+    return new _Instance2.default({ type: this.type, id }, this.api).reload(params);
   }
 
   uri() {
@@ -64,10 +69,10 @@ module.exports = class Resource {
       additions[_key] = arguments[_key];
     }
 
-    return path.join(this.type, ...additions);
+    return _path2.default.join(this.type, ...additions);
   }
 
   options() {
-    return this.api.client.options(this.type).then(processResponse);
+    return this.api.client.options(this.type).then(_processResponse2.default);
   }
 };

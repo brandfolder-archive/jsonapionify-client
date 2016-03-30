@@ -1,19 +1,15 @@
 'use strict';
 
-var _require = require('../errors');
-
-const VerbUnsupportedError = _require.VerbUnsupportedError;
-const InvalidRelationshipError = _require.InvalidRelationshipError;
+var _errors = require('../errors');
 
 // Prep Instance Data
-
 function prepareInstanceRequestBodyFor(instance, verb) {
   return instance.options().then(function (_ref) {
     let json = _ref.json;
 
     let attributes = {};
     if (json.meta.requests[verb] === undefined) {
-      throw new VerbUnsupportedError(`'${ instance.uri() }' does not support '${ verb }'`);
+      throw new _errors.VerbUnsupportedError(`'${ instance.uri() }' does not support '${ verb }'`);
     }
     json.meta.requests[verb].attributes.forEach(function (attribute) {
       attributes[attribute.name] = instance.attributes[attribute.name];
@@ -32,7 +28,7 @@ function prepareInstanceRequestBodyFor(instance, verb) {
 }
 
 function getRelationshipData(instance, name) {
-  let error = new InvalidRelationshipError(`${ name } is not a valid relationship`);
+  let error = new _errors.InvalidRelationshipError(`${ name } is not a valid relationship`);
   let api = instance.api;
   let relationships = instance.relationships;
 

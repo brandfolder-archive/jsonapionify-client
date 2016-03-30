@@ -1,60 +1,58 @@
 'use strict';
 
-const processResponse = require('../helpers/processResponse');
+var _processResponse = require('../helpers/processResponse');
 
-var _require = require('./preparers');
+var _processResponse2 = _interopRequireDefault(_processResponse);
 
-const prepareInstanceRequestBodyFor = _require.prepareInstanceRequestBodyFor;
+var _errors = require('../errors');
 
-var _require2 = require('../errors');
+var _preparers = require('./preparers');
 
-const HTTPError404 = _require2.HTTPError404;
-const NotPersistedError = _require2.NotPersistedError;
-
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function reloadInstance(instance, params) {
-  var _require3 = require('./builders');
+  var _require = require('./builders');
 
-  let buildInstanceWithResponse = _require3.buildInstanceWithResponse;
+  let buildInstanceWithResponse = _require.buildInstanceWithResponse;
 
   let uri = instance.uri();
   let collectionUri = instance.collection && instance.collection.uri();
   if (uri === undefined || uri === collectionUri || instance.id === undefined) {
-    return Promise.reject(new NotPersistedError('Instance is not persisted'));
+    return Promise.reject(new _errors.NotPersistedError('Instance is not persisted'));
   }
-  return instance.api.client.get(uri, params).then(processResponse).then(buildInstanceWithResponse.bind(undefined, instance)).catch(function (error) {
-    if (error instanceof HTTPError404) {
-      return Promise.reject(new NotPersistedError('Instance is not persisted'));
+  return instance.api.client.get(uri, params).then(_processResponse2.default).then(buildInstanceWithResponse.bind(undefined, instance)).catch(function (error) {
+    if (error.hasStatus(404)) {
+      return Promise.reject(new _errors.NotPersistedError('Instance is not persisted'));
     }
     throw error;
   });
 }
 
 function deleteInstance(instance, params) {
-  var _require4 = require('./builders');
+  var _require2 = require('./builders');
 
-  let buildDeletedInstanceWithResponse = _require4.buildDeletedInstanceWithResponse;
+  let buildDeletedInstanceWithResponse = _require2.buildDeletedInstanceWithResponse;
 
   return instance.api.client.delete(instance.links.self, params).then(buildDeletedInstanceWithResponse.bind(undefined, instance));
 }
 
 function patchInstance(instance, params) {
-  var _require5 = require('./builders');
+  var _require3 = require('./builders');
 
-  let buildInstanceWithResponse = _require5.buildInstanceWithResponse;
+  let buildInstanceWithResponse = _require3.buildInstanceWithResponse;
 
-  return prepareInstanceRequestBodyFor(instance, 'PATCH').then(function (body) {
-    return instance.api.client.patch(instance.uri(), body, params).then(processResponse).then(buildInstanceWithResponse.bind(undefined, instance));
+  return (0, _preparers.prepareInstanceRequestBodyFor)(instance, 'PATCH').then(function (body) {
+    return instance.api.client.patch(instance.uri(), body, params).then(_processResponse2.default).then(buildInstanceWithResponse.bind(undefined, instance));
   });
 }
 
 function postInstance(instance, params) {
-  var _require6 = require('./builders');
+  var _require4 = require('./builders');
 
-  let buildInstanceWithResponse = _require6.buildInstanceWithResponse;
+  let buildInstanceWithResponse = _require4.buildInstanceWithResponse;
 
-  return prepareInstanceRequestBodyFor(instance, 'POST').then(function (body) {
-    return instance.api.client.post(instance.uri(), body, params).then(processResponse).then(buildInstanceWithResponse.bind(undefined, instance));
+  return (0, _preparers.prepareInstanceRequestBodyFor)(instance, 'POST').then(function (body) {
+    return instance.api.client.post(instance.uri(), body, params).then(_processResponse2.default).then(buildInstanceWithResponse.bind(undefined, instance));
   });
 }
 

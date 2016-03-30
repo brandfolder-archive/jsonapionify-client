@@ -1,33 +1,36 @@
 'use strict';
 
-const ResourceIdentifier = require('./ResourceIdentifier');
-const processResponse = require('../helpers/processResponse');
+var _lodash = require('lodash');
 
-var _require = require('../helpers/preparers');
+var _lodash2 = _interopRequireDefault(_lodash);
 
-const getRelationshipData = _require.getRelationshipData;
+var _path = require('path');
 
-var _require2 = require('../errors');
+var _path2 = _interopRequireDefault(_path);
 
-const NotPersistedError = _require2.NotPersistedError;
+var _url = require('url');
 
-var _require3 = require('../helpers/optionsCache');
+var _url2 = _interopRequireDefault(_url);
 
-const optionsCache = _require3.optionsCache;
+var _processResponse = require('../helpers/processResponse');
 
-const url = require('url');
-const _ = require('lodash');
-const path = require('path');
+var _processResponse2 = _interopRequireDefault(_processResponse);
 
-var _require4 = require('../helpers/instanceActions');
+var _ResourceIdentifier = require('./ResourceIdentifier');
 
-const reloadInstance = _require4.reloadInstance;
-const patchInstance = _require4.patchInstance;
-const postInstance = _require4.postInstance;
-const deleteInstance = _require4.deleteInstance;
+var _ResourceIdentifier2 = _interopRequireDefault(_ResourceIdentifier);
 
+var _errors = require('../errors');
 
-class Instance extends ResourceIdentifier {
+var _instanceActions = require('../helpers/instanceActions');
+
+var _optionsCache = require('../helpers/optionsCache');
+
+var _preparers = require('../helpers/preparers');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class Instance extends _ResourceIdentifier2.default {
   constructor(_ref, api, collection) {
     let type = _ref.type;
     let id = _ref.id;
@@ -42,7 +45,7 @@ class Instance extends ResourceIdentifier {
     });
     this.api = api;
     this.collection = collection;
-    this.optionsCache = optionsCache.bind(this);
+    this.optionsCache = _optionsCache.optionsCache.bind(this);
     this.attributes = Object.freeze(attributes || {});
     this.links = Object.freeze(links || {});
     this.meta = Object.freeze(meta || {});
@@ -75,7 +78,7 @@ class Instance extends ResourceIdentifier {
   // Deletes an instance, returning a new instance with the same attributes, but
   // with no ID. The instance can be recreated by calling save() on the instance
   delete(params) {
-    return this.checkPersistence().then(deleteInstance.bind(undefined, this, params));
+    return this.checkPersistence().then(_instanceActions.deleteInstance.bind(undefined, this, params));
   }
 
   get resource() {
@@ -95,71 +98,71 @@ class Instance extends ResourceIdentifier {
       additions[_key] = arguments[_key];
     }
 
-    return path.join(parentKey, idKey, ...additions);
+    return _path2.default.join(parentKey, idKey, ...additions);
   }
 
   // Returns the request options
   options() {
     return this.optionsCache(() => {
       setTimeout(() => delete this.optionsCache[this.optionsCacheKey()], 120);
-      return this.api.client.options(this.uri()).then(processResponse);
+      return this.api.client.options(this.uri()).then(_processResponse2.default);
     });
   }
 
   // Fetches the related collection or instance
   related(name, params) {
-    var _require5 = require('../helpers/builders');
+    var _require = require('../helpers/builders');
 
-    const buildCollectionOrInstance = _require5.buildCollectionOrInstance;
+    const buildCollectionOrInstance = _require.buildCollectionOrInstance;
 
-    return getRelationshipData(this, name).then(function (_ref2) {
+    return (0, _preparers.getRelationshipData)(this, name).then(function (_ref2) {
       let data = _ref2.data;
       let api = _ref2.api;
 
       return api.client.get(data.links.related, params);
-    }).then(processResponse).then(response => buildCollectionOrInstance(this, name, response));
+    }).then(_processResponse2.default).then(response => buildCollectionOrInstance(this, name, response));
   }
 
   // Gets options about the relation
   relatedOptions(name) {
     return this.optionsCache(() => {
-      return getRelationshipData(this, name).then(function (_ref3) {
+      return (0, _preparers.getRelationshipData)(this, name).then(function (_ref3) {
         let data = _ref3.data;
         let api = _ref3.api;
 
         return api.client.options(data.links.related);
-      }).then(processResponse);
+      }).then(_processResponse2.default);
     }, name);
   }
 
   // Fetches the relationship
   relationship(name, params) {
-    var _require6 = require('../helpers/builders');
+    var _require2 = require('../helpers/builders');
 
-    const buildOneOrManyRelationship = _require6.buildOneOrManyRelationship;
+    const buildOneOrManyRelationship = _require2.buildOneOrManyRelationship;
 
-    return getRelationshipData(this, name).then(function (_ref4) {
+    return (0, _preparers.getRelationshipData)(this, name).then(function (_ref4) {
       let data = _ref4.data;
       let api = _ref4.api;
 
       return api.client.get(data.links.self, params);
-    }).then(processResponse).then(buildOneOrManyRelationship.bind(undefined, this));
+    }).then(_processResponse2.default).then(buildOneOrManyRelationship.bind(undefined, this));
   }
 
   // Reloads the instance, returns a new instance object with the reloaded data
   reload(params) {
-    return reloadInstance(this, params);
+    return (0, _instanceActions.reloadInstance)(this, params);
   }
 
   // Saves the instance, returns a new object with the saved data.
   save(params) {
     let instance = this;
     return this.checkPersistence().then(function () {
-      return patchInstance(instance, params);
+      return (0, _instanceActions.patchInstance)(instance, params);
     }).catch(function (error) {
       // Create the instance
-      if (error instanceof NotPersistedError) {
-        return postInstance(instance, params);
+      if (error instanceof _errors.NotPersistedError) {
+        return (0, _instanceActions.postInstance)(instance, params);
       }
       throw error;
     });
@@ -179,8 +182,8 @@ class Instance extends ResourceIdentifier {
 
     let selfUri = this.links.self;
     let parentUri = this.collection && this.collection.uri(false);
-    let resourceUri = _.compact([this.type, this.id]).join('/');
-    let u = url.parse(selfUri || parentUri || resourceUri);
+    let resourceUri = _lodash2.default.compact([this.type, this.id]).join('/');
+    let u = _url2.default.parse(selfUri || parentUri || resourceUri);
     if (!params) {
       u.search = undefined;
       u.query = undefined;
@@ -191,9 +194,9 @@ class Instance extends ResourceIdentifier {
   // Writes the new attributes, returns an instance with the newly written
   // attributes
   writeAttributes(attributes) {
-    var _require7 = require('../helpers/builders');
+    var _require3 = require('../helpers/builders');
 
-    const buildInstanceWithAttributes = _require7.buildInstanceWithAttributes;
+    const buildInstanceWithAttributes = _require3.buildInstanceWithAttributes;
 
     let newAttributes = {};
     let keys = Object.keys(this.attributes).concat(Object.keys(attributes));

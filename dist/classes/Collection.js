@@ -1,14 +1,24 @@
 'use strict';
 
-const Instance = require('./Instance.js');
-const processResponse = require('../helpers/processResponse.js');
-const url = require('url');
+var _path = require('path');
 
-var _require = require('../helpers/optionsCache');
+var _path2 = _interopRequireDefault(_path);
 
-const optionsCache = _require.optionsCache;
+var _url = require('url');
 
-const path = require('path');
+var _url2 = _interopRequireDefault(_url);
+
+var _processResponse = require('../helpers/processResponse.js');
+
+var _processResponse2 = _interopRequireDefault(_processResponse);
+
+var _Instance = require('./Instance.js');
+
+var _Instance2 = _interopRequireDefault(_Instance);
+
+var _optionsCache = require('../helpers/optionsCache');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class Collection extends Array {
   constructor(_ref, api, defaultResource) {
@@ -20,12 +30,12 @@ class Collection extends Array {
 
     this.api = api;
     this.defaultResource = defaultResource;
-    this.optionsCache = optionsCache.bind(this);
+    this.optionsCache = _optionsCache.optionsCache.bind(this);
 
     this.links = Object.freeze(links || {});
     this.meta = Object.freeze(meta || {});
     (data || []).forEach(function (instanceData) {
-      this.push(new Instance(instanceData, api, this));
+      this.push(new _Instance2.default(instanceData, api, this));
     }, this);
 
     if (this.constructor === Collection) {
@@ -47,7 +57,7 @@ class Collection extends Array {
     let id = _ref2.id;
 
     type = type || this.defaultResource.type;
-    return new Instance({
+    return new _Instance2.default({
       type,
       attributes,
       id
@@ -87,57 +97,57 @@ class Collection extends Array {
     if (this.defaultResource) {
       return this.defaultResource.optionsCacheKey(...additions);
     }
-    return path.join(this.uri(), ...additions);
+    return _path2.default.join(this.uri(), ...additions);
   }
 
   options(params) {
-    return optionsCache(() => this.api.client.options(this.uri(), params).then(processResponse));
+    return (0, _optionsCache.optionsCache)(() => this.api.client.options(this.uri(), params).then(_processResponse2.default));
   }
 
   reload(params) {
+    var _require = require('../helpers/builders');
+
+    let buildCollectionWithResponse = _require.buildCollectionWithResponse;
+
+    return this.api.client.get(this.uri(), params).then(_processResponse2.default).then(buildCollectionWithResponse.bind(undefined, this));
+  }
+
+  nextPage() {
     var _require2 = require('../helpers/builders');
 
     let buildCollectionWithResponse = _require2.buildCollectionWithResponse;
 
-    return this.api.client.get(this.uri(), params).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
+    return this.api.client.get(this.links['next']).then(_processResponse2.default).then(buildCollectionWithResponse.bind(undefined, this));
   }
 
-  nextPage() {
+  prevPage() {
     var _require3 = require('../helpers/builders');
 
     let buildCollectionWithResponse = _require3.buildCollectionWithResponse;
 
-    return this.api.client.get(this.links['next']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
+    return this.api.client.get(this.links['prev']).then(_processResponse2.default).then(buildCollectionWithResponse.bind(undefined, this));
   }
 
-  prevPage() {
+  firstPage() {
     var _require4 = require('../helpers/builders');
 
     let buildCollectionWithResponse = _require4.buildCollectionWithResponse;
 
-    return this.api.client.get(this.links['prev']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
+    return this.api.client.get(this.links['first']).then(_processResponse2.default).then(buildCollectionWithResponse.bind(undefined, this));
   }
 
-  firstPage() {
+  lastPage() {
     var _require5 = require('../helpers/builders');
 
     let buildCollectionWithResponse = _require5.buildCollectionWithResponse;
 
-    return this.api.client.get(this.links['first']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
-  }
-
-  lastPage() {
-    var _require6 = require('../helpers/builders');
-
-    let buildCollectionWithResponse = _require6.buildCollectionWithResponse;
-
-    return this.api.client.get(this.links['last']).then(processResponse).then(buildCollectionWithResponse.bind(undefined, this));
+    return this.api.client.get(this.links['last']).then(_processResponse2.default).then(buildCollectionWithResponse.bind(undefined, this));
   }
 
   uri() {
     let params = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
-    let u = url.parse(this.links.self || this.defaultResource.type);
+    let u = _url2.default.parse(this.links.self || this.defaultResource.type);
     if (!params) {
       u.search = undefined;
       u.query = undefined;

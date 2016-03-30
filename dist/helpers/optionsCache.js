@@ -6,28 +6,35 @@ Object.defineProperty(exports, "__esModule", {
 const optsCache = {};
 
 function optionsCache(fn) {
-  let expiresIn = 30000;
-
   for (var _len = arguments.length, additions = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
     additions[_key - 1] = arguments[_key];
   }
 
+  let expiresIn = 30000;
   let key = this.optionsCacheKey(...additions);
   let time = new Date();
+  let promise;
 
   // Cache Hit
   if (optsCache[key]) {
     if (time - optsCache[key].time < expiresIn) {
-      return optsCache[key].promise;
+      promise = optsCache[key].promise;
+    } else {
+      delete optsCache[key];
     }
-    delete optsCache[key];
+  } else {
+    // Cache Miss
+    promise = fn();
+    optsCache[key] = { promise, time };
   }
 
-  // Cache Miss
-  let promise = fn();
-  optsCache[key] = { promise, time };
-
-  return promise;
+  return promise.catch(reason => {
+    if (optsCache[key]) {
+      delete optsCache[key];
+      return optionsCache(fn, ...additions);
+    }
+    throw reason;
+  });
 }
 
 function clearOptionsCache() {

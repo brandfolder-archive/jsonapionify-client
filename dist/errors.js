@@ -1,45 +1,57 @@
 'use strict';
 
-function buildHttpError(statusCode) {
-  let baseClassName = `HTTPError${ (statusCode - statusCode % 100) / 100 }xx`;
-
-  if (statusCode % 100 === 0) {
-    classes[baseClassName] = class extends classes.HTTPError {
-      constructor(message, fileName, lineNumber) {
-        super(message, fileName, lineNumber);
-      }
-    };
-  }
-
-  classes[`HTTPError${ statusCode }`] = class extends classes[baseClassName] {
-    constructor(message, fileName, lineNumber) {
-      super(message, fileName, lineNumber);
-      this.statusCode = statusCode;
-    }
-  };
-}
-
-const classes = {};
-
-classes.HTTPError = class extends Error {
-  constructor(message, fileName, lineNumber) {
-    super(message, fileName, lineNumber);
-    this.name = this.constructor.name;
-    Error.captureStackTrace(this, this.constructor.name);
-  }
-};
-
-for (let i = 400; i <= 599; i++) {
-  buildHttpError(i);
-}
-
-let errorNames = ['InvalidRelationshipError', 'NotPersistedError', 'VerbUnsupportedError'];
-errorNames.forEach(function (errorName) {
-  classes[errorName] = class extends Error {
-    constructor() {
-      super(...arguments);
-    }
-  };
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
+class CompositeError extends Error {
+  constructor(response) {
+    super();
+    this.response = response;
+  }
 
-module.exports = classes;
+  get errors() {
+    return this.response.json.errors;
+  }
+
+  hasStatus(code) {
+    return this.errors.filter(error => parseInt(error.status, 10) === code).length > 1;
+  }
+
+  get message() {
+    return this.errors.map(function (error) {
+      let msg = '';
+      if (error.status) {
+        msg += error.status;
+      }
+      if (error.title) {
+        msg += msg ? ` ${ error.title }` : error.title;
+      }
+      if (error.detail) {
+        msg += msg ? `: ${ error.detail }` : error.detail;
+      }
+      return msg;
+    }).join(', ');
+  }
+}
+
+exports.CompositeError = CompositeError;
+class VerbUnsupportedError extends Error {
+  constructor() {
+    super(...arguments);
+  }
+}
+
+exports.VerbUnsupportedError = VerbUnsupportedError;
+class NotPersistedError extends Error {
+  constructor() {
+    super(...arguments);
+  }
+}
+
+exports.NotPersistedError = NotPersistedError;
+class InvalidRelationshipError extends Error {
+  constructor() {
+    super(...arguments);
+  }
+}
+exports.InvalidRelationshipError = InvalidRelationshipError;

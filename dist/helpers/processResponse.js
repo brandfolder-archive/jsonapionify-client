@@ -1,33 +1,16 @@
 'use strict';
 
-const Errors = require('../errors.js');
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-function errorsToMessage(errors) {
-  return errors.map(function (error) {
-    let msg = '';
-    if (error.status) {
-      msg += error.status;
-    }
-    if (error.title) {
-      msg += msg ? ` ${ error.title }` : error.title;
-    }
-    if (error.detail) {
-      msg += msg ? `: ${ error.detail }` : error.detail;
-    }
-    return msg;
-  }).join(', ');
-}
+var _errors = require('../errors');
 
 function processResponse(response) {
   return new Promise(function (resolve, reject) {
     let json = response.json;
     if (json.errors) {
-      let message = errorsToMessage(json.errors);
-      let error = new Errors[`HTTPError${ response.status }`](message);
-      reject({
-        error,
-        response
-      });
+      reject(new _errors.CompositeError(response));
     } else {
       resolve({
         json,
@@ -37,4 +20,4 @@ function processResponse(response) {
   });
 }
 
-module.exports = processResponse;
+exports.default = processResponse;

@@ -1,7 +1,14 @@
 'use strict';
 
-const ResourceIdentifier = require('./ResourceIdentifier');
-const processResponse = require('../helpers/processResponse.js');
+var _processResponse = require('../helpers/processResponse.js');
+
+var _processResponse2 = _interopRequireDefault(_processResponse);
+
+var _ResourceIdentifier = require('./ResourceIdentifier');
+
+var _ResourceIdentifier2 = _interopRequireDefault(_ResourceIdentifier);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function itemsToResourceIdentifiers(resourceIdentifiers) {
   if (!(resourceIdentifiers instanceof Array)) {
@@ -24,7 +31,7 @@ function modifyRelationship(_ref2, items, action, params) {
 
   return api.client[action](links.self, {
     data: itemsToResourceIdentifiers(items)
-  }, params).then(processResponse).then(function (response) {
+  }, params).then(_processResponse2.default).then(function (response) {
     let relationship = new ManyRelationship({
       api
     }, response);
@@ -47,7 +54,7 @@ class ManyRelationship extends Array {
     this.links = Object.freeze(links);
     this.meta = Object.freeze(meta);
     this.concat((data || []).map(function (d) {
-      return new ResourceIdentifier(d, this.api);
+      return new _ResourceIdentifier2.default(d, this.api);
     }, this));
     Object.freeze(this);
   }

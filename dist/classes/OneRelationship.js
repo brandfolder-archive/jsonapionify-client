@@ -1,9 +1,16 @@
 'use strict';
 
-const ResourceIdentifier = require('./ResourceIdentifier');
-const processResponse = require('../helpers/processResponse');
+var _processResponse = require('../helpers/processResponse');
 
-module.exports = class OneRelationship extends ResourceIdentifier {
+var _processResponse2 = _interopRequireDefault(_processResponse);
+
+var _ResourceIdentifier = require('./ResourceIdentifier');
+
+var _ResourceIdentifier2 = _interopRequireDefault(_ResourceIdentifier);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+module.exports = class OneRelationship extends _ResourceIdentifier2.default {
   constructor(_ref, _ref2) {
     let api = _ref.api;
     let links = _ref2.links;
@@ -20,7 +27,7 @@ module.exports = class OneRelationship extends ResourceIdentifier {
   replace(item, params) {
     this.client.patch(this.links.self, {
       data: item ? item.resourceIdentifier : null
-    }, params).then(processResponse).then(function (response) {
+    }, params).then(_processResponse2.default).then(function (response) {
       let relationship = new OneRelationship(relationship, response);
       return {
         relationship,
