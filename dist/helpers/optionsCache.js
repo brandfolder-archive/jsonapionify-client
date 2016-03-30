@@ -16,14 +16,11 @@ function optionsCache(fn) {
   let promise;
 
   // Cache Hit
-  if (optsCache[key]) {
-    if (time - optsCache[key].time < expiresIn) {
-      promise = optsCache[key].promise;
-    } else {
-      delete optsCache[key];
-    }
+  if (optsCache[key] && time - optsCache[key].time < expiresIn) {
+    promise = optsCache[key].promise;
   } else {
     // Cache Miss
+    delete optsCache[key];
     promise = fn();
     optsCache[key] = { promise, time };
   }
