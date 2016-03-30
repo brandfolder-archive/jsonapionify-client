@@ -1,6 +1,7 @@
-const Collection = require('./Collection.js');
-const processResponse = require('../helpers/processResponse.js');
-const url = require('url');
+import url from 'url';
+
+import processResponse from '../helpers/processResponse.js';
+import Collection from './Collection.js';
 
 class RelatedCollection extends Collection {
   constructor({ data, links, meta }, parent, relName, defaultResource) {

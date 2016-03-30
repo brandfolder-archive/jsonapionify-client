@@ -1,4 +1,4 @@
-const Collection = require('../classes/Collection');
+import Collection from '../classes/Collection';
 
 // Collection Modifiers
 function collectionWithoutInstance(collection, instance) {

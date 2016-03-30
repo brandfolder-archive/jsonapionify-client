@@ -1,5 +1,5 @@
-const ResourceIdentifier = require('./ResourceIdentifier');
-const processResponse = require('../helpers/processResponse');
+import processResponse from '../helpers/processResponse';
+import ResourceIdentifier from './ResourceIdentifier';
 
 module.exports = class OneRelationship extends ResourceIdentifier {
   constructor({ api }, { links, meta, data }) {

@@ -1,5 +1,5 @@
-const ResourceIdentifier = require('./ResourceIdentifier');
-const processResponse = require('../helpers/processResponse.js');
+import processResponse from '../helpers/processResponse.js';
+import ResourceIdentifier from './ResourceIdentifier';
 
 function itemsToResourceIdentifiers(resourceIdentifiers) {
   if (!(resourceIdentifiers instanceof Array)) {

@@ -1,14 +1,15 @@
-const ResourceIdentifier = require('./ResourceIdentifier');
-const processResponse = require('../helpers/processResponse');
-const { getRelationshipData } = require('../helpers/preparers');
-const { NotPersistedError } = require('../errors');
-const { optionsCache } = require('../helpers/optionsCache');
-const url = require('url');
-const _ = require('lodash');
-const path = require('path');
-const {
+import _ from 'lodash';
+import path from 'path';
+import url from 'url';
+
+import processResponse from '../helpers/processResponse';
+import ResourceIdentifier from './ResourceIdentifier';
+import { NotPersistedError } from '../errors';
+import {
   reloadInstance, patchInstance, postInstance, deleteInstance
-} = require('../helpers/instanceActions');
+} from '../helpers/instanceActions';
+import { optionsCache } from '../helpers/optionsCache';
+import { getRelationshipData } from '../helpers/preparers';
 
 class Instance extends ResourceIdentifier {
   constructor(

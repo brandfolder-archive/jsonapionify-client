@@ -1,6 +1,6 @@
-const processResponse = require('../helpers/processResponse');
-const { prepareInstanceRequestBodyFor } = require('./preparers');
-const { HTTPError404, NotPersistedError } = require('../errors');
+import processResponse from '../helpers/processResponse';
+import { NotPersistedError } from '../errors';
+import { prepareInstanceRequestBodyFor } from './preparers';
 
 function reloadInstance(instance, params) {
   let { buildInstanceWithResponse } = require('./builders');
@@ -12,7 +12,7 @@ function reloadInstance(instance, params) {
   return instance.api.client.get(uri, params).then(processResponse).then(
     buildInstanceWithResponse.bind(undefined, instance)
   ).catch(function (error) {
-    if (error instanceof HTTPError404) {
+    if (error.hasStatus(404)) {
       return Promise.reject(new NotPersistedError('Instance is not persisted'));
     }
     throw error;

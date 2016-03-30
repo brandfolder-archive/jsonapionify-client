@@ -1,48 +1,50 @@
-function buildHttpError(statusCode) {
-  let baseClassName = `HTTPError${(statusCode - statusCode % 100) / 100}xx`;
+export class CompositeError extends Error {
+  constructor(response) {
+    super();
+    this.response = response;
+  }
 
-  if (statusCode % 100 === 0) {
-    classes[baseClassName] = class extends classes.HTTPError {
-      constructor(message, fileName, lineNumber) {
-        super(message, fileName, lineNumber);
+  get errors() {
+    return this.response.json.errors;
+  }
+
+  hasStatus(code) {
+    return this.errors.filter(
+      error => parseInt(error.status, 10) === code
+    ).length > 1;
+  }
+
+  get message() {
+    return this.errors.map(function (error) {
+      let msg = '';
+      if (error.status) {
+        msg += error.status;
       }
-    };
-  }
-
-  classes[`HTTPError${statusCode}`] = class extends classes[baseClassName] {
-    constructor(message, fileName, lineNumber) {
-      super(message, fileName, lineNumber);
-      this.statusCode = statusCode;
-    }
-  };
-}
-
-const classes = {};
-
-classes.HTTPError = class extends Error {
-  constructor(message, fileName, lineNumber) {
-    super(message, fileName, lineNumber);
-    this.name = this.constructor.name;
-    Error.captureStackTrace(this, this.constructor.name);
+      if (error.title) {
+        msg += msg ? ` ${error.title}` : error.title;
+      }
+      if (error.detail) {
+        msg += msg ? `: ${error.detail}` : error.detail;
+      }
+      return msg;
+    }).join(', ');
   }
 }
-;
 
-for (let i = 400; i <= 599; i++) {
-  buildHttpError(i);
+export class VerbUnsupportedError extends Error {
+  constructor(...args) {
+    super(...args);
+  }
 }
 
-let errorNames = [
-  'InvalidRelationshipError',
-  'NotPersistedError',
-  'VerbUnsupportedError'
-];
-errorNames.forEach(function (errorName) {
-  classes[errorName] = class extends Error {
-    constructor(...args) {
-      super(...args);
-    }
-  };
-});
+export class NotPersistedError extends Error {
+  constructor(...args) {
+    super(...args);
+  }
+}
 
-module.exports = classes;
+export class InvalidRelationshipError extends Error {
+  constructor(...args) {
+    super(...args);
+  }
+}

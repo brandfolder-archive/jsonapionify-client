@@ -1,12 +1,14 @@
-const processResponse = require('../helpers/processResponse.js');
-const Instance = require('./Instance.js');
-const Collection = require('./Collection.js');
-const { optionsCache } = require('../helpers/optionsCache');
-const path = require('path');
-const {
+import path from 'path';
+
+import processResponse from '../helpers/processResponse.js';
+import Collection from './Collection.js';
+import Instance from './Instance.js';
+import {
   buildOneOrManyRelationship,
-  buildCollectionOrInstance, buildCollectionWithResponse
-} = require('../helpers/builders');
+  buildCollectionOrInstance,
+  buildCollectionWithResponse
+} from '../helpers/builders';
+import { optionsCache } from '../helpers/optionsCache';
 
 module.exports = class Resource {
   constructor(type, api) {

@@ -1,8 +1,9 @@
-const Instance = require('./Instance.js');
-const processResponse = require('../helpers/processResponse.js');
-const url = require('url');
-const { optionsCache } = require('../helpers/optionsCache');
-const path = require('path');
+import path from 'path';
+import url from 'url';
+
+import processResponse from '../helpers/processResponse.js';
+import Instance from './Instance.js';
+import { optionsCache } from '../helpers/optionsCache';
 
 class Collection extends Array {
   constructor({ data, links, meta }, api, defaultResource) {

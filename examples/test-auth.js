@@ -1,8 +1,10 @@
 'use strict';
-const { JSONAPIonify, jsonApionifyLogger } = require('../src/index.js');
-const _ = require('lodash');
-const stackTrace = require('stack-trace');
-const readline = require('readline');
+
+import _ from 'lodash';
+import readline from 'readline'
+import stackTrace from 'stack-trace'
+
+import { JSONAPIonify, jsonApionifyLogger } from '../src/index.js'
 
 const api = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT, {
   allowSetHeaders: true,
@@ -66,8 +68,8 @@ login().then(({ instance }) => {
 ).then(() => {
   api.client.headers.authorization = '';
   console.log("test user signup")
-  let email = `hello+${new Date() * 1}@example.org`;
-  let password = 'testing123';
+  let email = `hello@example.org`;
+  let password = 'te';
   let attributes = { email, password };
   return api.resource('users').create({ attributes })
 }).then(({ instance }) => {

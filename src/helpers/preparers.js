@@ -1,4 +1,4 @@
-const { VerbUnsupportedError, InvalidRelationshipError } = require('../errors');
+import { VerbUnsupportedError, InvalidRelationshipError } from '../errors';
 
 // Prep Instance Data
 function prepareInstanceRequestBodyFor(instance, verb) {

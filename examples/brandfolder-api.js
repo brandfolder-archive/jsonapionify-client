@@ -1,7 +1,9 @@
 'use strict';
-const { JSONAPIonify, jsonApionifyLogger } = require('../src/index.js');
-const _ = require('lodash');
-const stackTrace = require('stack-trace');
+
+import _ from 'lodash';
+import stackTrace from 'stack-trace'
+
+import { JSONAPIonify, jsonApionifyLogger } from '../src/index.js'
 
 function logError(error) {
   console.error('');
