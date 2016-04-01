@@ -13,12 +13,16 @@ function optionsCache(fn, ...additions) {
     // Cache Miss
     delete optsCache[key];
     promise = fn();
-    optsCache[key] = { promise, time };
+    let retrys = 0;
+    optsCache[key] = { promise, time, retrys };
   }
 
   return promise.catch(reason => {
     if (optsCache[key]) {
-      delete optsCache[key];
+      if (optsCache[key].retrys++ > 3) {
+        delete optsCache[key];
+        throw reason;
+      }
       return optionsCache(fn, ...additions);
     }
     throw reason;
