@@ -9,7 +9,7 @@ function prepareInstanceRequestBodyFor(instance, verb) {
         `'${instance.uri()}' does not support '${verb}'`
       );
     }
-    json.meta.requests[verb].attributes.forEach(function (attribute) {
+    json.meta.requests[verb].request_attributes.forEach(function (attribute) {
       attributes[attribute.name] = instance.attributes[attribute.name];
     });
     let body = {
