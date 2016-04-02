@@ -12,7 +12,7 @@ function reloadInstance(instance, params) {
   return instance.api.client.get(uri, params).then(processResponse).then(
     buildInstanceWithResponse.bind(undefined, instance)
   ).catch(function (error) {
-    if (error.hasStatus(404)) {
+    if (error.hasStatus instanceof Function && error.hasStatus(404)) {
       return Promise.reject(new NotPersistedError('Instance is not persisted'));
     }
     throw error;
