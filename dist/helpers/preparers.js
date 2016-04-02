@@ -11,7 +11,7 @@ function prepareInstanceRequestBodyFor(instance, verb) {
     if (json.meta.requests[verb] === undefined) {
       throw new _errors.VerbUnsupportedError(`'${ instance.uri() }' does not support '${ verb }'`);
     }
-    json.meta.requests[verb].attributes.forEach(function (attribute) {
+    json.meta.requests[verb].request_attributes.forEach(function (attribute) {
       attributes[attribute.name] = instance.attributes[attribute.name];
     });
     let body = {

@@ -21,7 +21,7 @@ function reloadInstance(instance, params) {
     return Promise.reject(new _errors.NotPersistedError('Instance is not persisted'));
   }
   return instance.api.client.get(uri, params).then(_processResponse2.default).then(buildInstanceWithResponse.bind(undefined, instance)).catch(function (error) {
-    if (error.hasStatus(404)) {
+    if (error.hasStatus instanceof Function && error.hasStatus(404)) {
       return Promise.reject(new _errors.NotPersistedError('Instance is not persisted'));
     }
     throw error;
