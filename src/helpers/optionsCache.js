@@ -23,7 +23,7 @@ function optionsCache(fn, ...additions) {
         delete optsCache[key];
         throw reason;
       }
-      return optionsCache(fn, ...additions);
+      return optionsCache.bind(this)(fn, ...additions);
     }
     throw reason;
   });
