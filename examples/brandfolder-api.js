@@ -117,25 +117,31 @@ api.resource('organizations').list().then(function({collection: organizations}) 
     return asset.related('brandfolder');
   });
 }).then(function({instance: brandfolder}) {
-  let publicApi = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT);
-  let i = 0;
-  return Promise.all(_.times(2, function() {
-    return publicApi.resource('users').create({
-      attributes: {
-        email: `devman+${(new Date() * 1)}-${i++}-@brandfolder.com`,
-        password: 'weakpassword1'
-      }
-    });
-  })).then(function(results) {
-    let users = results.map(function({instance: user}) {
-      return user;
-    });
-    return brandfolder.relationship('admins').then(function({relationship: admins}) {
-      admins.add(users);
-    });
-  }).then(function() {
-    return brandfolder;
-  });
+  return brandfolder.related('invitations').then(function({collection: invitations}){
+    return invitations.create({ attributes: { email: `devman+${(new Date() * 1)}@brandfolder.com`, permission_level: 'guest' } }).then(function({ instance: invitation }){
+      let token = invitation.attributes.token;
+      let publicApi = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT);
+      let i = 0;
+      return Promise.all(_.times(2, function() {
+        return publicApi.resource('users').create({
+          attributes: {
+            email: `devman+${(new Date() * 1)}-${i++}-@brandfolder.com`,
+            password: 'weakpassword1',
+            token: token
+          }
+        });
+      })).then(function(results) {
+        let users = results.map(function({instance: user}) {
+          return user;
+        });
+        return brandfolder.relationship('admins').then(function({relationship: admins}) {
+          admins.add(users);
+        });
+      }).then(function() {
+        return brandfolder;
+      });
+    })
+  })
 }).then(function(brandfolder) {
   console.log('test resource relationships');
   return Promise.all([
