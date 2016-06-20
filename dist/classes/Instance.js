@@ -58,10 +58,7 @@ class Instance extends _ResourceIdentifier2.default {
   // small response body
   checkPersistence() {
     let instance = this;
-    let params = {
-      fields: {},
-      'include-relationships': false
-    };
+    let params = { fields: {} };
     params.fields[this.type] = null;
     if (this.persisted) {
       return Promise.resolve(instance);

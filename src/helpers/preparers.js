@@ -31,7 +31,9 @@ function getRelationshipData(instance, name) {
   );
   let { api, relationships } = instance;
   if (instance.relationships === undefined) {
-    return instance.reload({ 'include-relationships': true }).then(
+    const fields = {}
+    fields[instance.type] = 'name';
+    return instance.reload({ fields }).then(
       function ({ instance: reloadedInstance }) {
         let data = reloadedInstance.relationships[name];
         if (data === undefined) {

@@ -26,10 +26,15 @@
     "LICENSE"
   ],
   "dependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-core": "^6.9.1",
+    "babel-eslint": "^6.0.4",
     "colors": "^1.1.2",
+    "eslint": "^2.13.0",
+    "eslint-plugin-babel": "^3.2.0",
     "isomorphic-fetch": "^2.2.1",
     "jquery-param": "^0.2.0",
-    "lodash": "^4.6.1",
+    "lodash": "^4.13.1",
     "string-just": "0.0.2"
   },
   "devDependencies": {
@@ -38,9 +43,9 @@
     "babel-core": "^6.4.0",
     "babel-preset-es2016-node5": "^1.1.2",
     "babel-preset-stage-0": "^6.4.0",
-    "babel-eslint": "4.0.10",
-    "eslint": "1.1.0",
-    "eslint-plugin-babel": "2.1.1"
+    "babel-eslint": "~6.0",
+    "eslint": "~2.13",
+    "eslint-plugin-babel": "~3.2.0"
   },
   "scripts": {
     "prepublish": "npm run build",
