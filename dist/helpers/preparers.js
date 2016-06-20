@@ -34,7 +34,7 @@ function getRelationshipData(instance, name) {
 
   if (instance.relationships === undefined) {
     const fields = {};
-    fields[instance.type] = 'name';
+    fields[instance.type] = name;
     return instance.reload({ fields }).then(function (_ref2) {
       let reloadedInstance = _ref2.instance;
 
