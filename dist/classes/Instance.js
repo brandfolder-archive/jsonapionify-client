@@ -108,24 +108,16 @@ class Instance extends _ResourceIdentifier2.default {
 
   // Fetches the related collection or instance
   related(name, params) {
-    var _require = require('../helpers/builders');
-
-    const buildCollectionOrInstance = _require.buildCollectionOrInstance;
-
-    return (0, _preparers.getRelationshipData)(this, name).then(function (_ref2) {
-      let data = _ref2.data;
-      let api = _ref2.api;
-
-      return api.client.get(data.links.related, params);
-    }).then(_processResponse2.default).then(response => buildCollectionOrInstance(this, name, response));
+    const RelatedProxy = require('./RelatedProxy').default;
+    return new RelatedProxy(this, name, params);
   }
 
   // Gets options about the relation
   relatedOptions(name) {
     return this.optionsCache(() => {
-      return (0, _preparers.getRelationshipData)(this, name).then(function (_ref3) {
-        let data = _ref3.data;
-        let api = _ref3.api;
+      return (0, _preparers.getRelationshipData)(this, name).then(function (_ref2) {
+        let data = _ref2.data;
+        let api = _ref2.api;
 
         return api.client.options(data.links.related);
       }).then(_processResponse2.default);
@@ -134,16 +126,8 @@ class Instance extends _ResourceIdentifier2.default {
 
   // Fetches the relationship
   relationship(name, params) {
-    var _require2 = require('../helpers/builders');
-
-    const buildOneOrManyRelationship = _require2.buildOneOrManyRelationship;
-
-    return (0, _preparers.getRelationshipData)(this, name).then(function (_ref4) {
-      let data = _ref4.data;
-      let api = _ref4.api;
-
-      return api.client.get(data.links.self, params);
-    }).then(_processResponse2.default).then(buildOneOrManyRelationship.bind(undefined, this));
+    const RelationshipProxy = require('./RelationshipProxy').default;
+    return new RelationshipProxy(this, name, params);
   }
 
   // Reloads the instance, returns a new instance object with the reloaded data
@@ -167,8 +151,8 @@ class Instance extends _ResourceIdentifier2.default {
 
   // Updates and returns a new instance object with the updated attributes
   updateAttributes(attributes, params) {
-    return this.writeAttributes(attributes).then(function (_ref5) {
-      let instance = _ref5.instance;
+    return this.writeAttributes(attributes).then(function (_ref3) {
+      let instance = _ref3.instance;
 
       return instance.save(params);
     });
@@ -191,9 +175,9 @@ class Instance extends _ResourceIdentifier2.default {
   // Writes the new attributes, returns an instance with the newly written
   // attributes
   writeAttributes(attributes) {
-    var _require3 = require('../helpers/builders');
+    var _require = require('../helpers/builders');
 
-    const buildInstanceWithAttributes = _require3.buildInstanceWithAttributes;
+    const buildInstanceWithAttributes = _require.buildInstanceWithAttributes;
 
     let newAttributes = {};
     let keys = Object.keys(this.attributes).concat(Object.keys(attributes));

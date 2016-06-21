@@ -16,6 +16,14 @@ var _Instance = require('./Instance.js');
 
 var _Instance2 = _interopRequireDefault(_Instance);
 
+var _RelatedProxy = require('./RelatedProxy');
+
+var _RelatedProxy2 = _interopRequireDefault(_RelatedProxy);
+
+var _RelationshipProxy = require('./RelationshipProxy');
+
+var _RelationshipProxy2 = _interopRequireDefault(_RelationshipProxy);
+
 var _builders = require('../helpers/builders');
 
 var _optionsCache = require('../helpers/optionsCache');
@@ -44,12 +52,15 @@ module.exports = class Resource {
   }
 
   relatedForId(id, name, params) {
-    let parentInstance = this.new({ id });
-    return this.api.client.get(`${ this.type }/${ id }/${ name }`, params).then(_processResponse2.default).then(response => (0, _builders.buildCollectionOrInstance)(parentInstance, name, response));
+    const parentInstance = this.new({ id });
+    const url = `${ this.type }/${ id }/${ name }`;
+    return new _RelatedProxy2.default(parentInstance, name, params, url);
   }
 
   relationshipForId(id, name, params) {
-    return this.api.client.get(`${ this.type }/${ id }/relationships/${ name }`, params).then(_processResponse2.default).then(_builders.buildOneOrManyRelationship.bind(undefined, this));
+    const parentInstance = this.new({ id });
+    const url = `${ this.type }/${ id }/relationships/${ name }`;
+    return new _RelationshipProxy2.default(parentInstance, name, params, url);
   }
 
   create(instanceData, params) {
