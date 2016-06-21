@@ -1,7 +1,13 @@
 {
   "presets": [
-    "es2016-node5",
+    "es2015",
     "stage-0"
+  ],
+  "plugins": [
+    ["babel-plugin-transform-builtin-extend", {
+      "globals": ["Error", "Array"],
+      "approximate": true
+    }]
   ],
   "ignore": [
     "node_modules",

@@ -8,7 +8,7 @@ exports.jsonApionifyLogger = undefined;
 var _stringJust = require('string-just');
 
 function colorStatus(status) {
-  let color = 'white';
+  var color = 'white';
   if (status < 300) {
     color = 'green';
   } else if (status < 400) {
@@ -18,11 +18,11 @@ function colorStatus(status) {
   } else {
     color = 'red';
   }
-  return `${ status }`[color];
+  return ('' + status)[color];
 }
 
 function colorDuration(duration) {
-  let color = 'white';
+  var color = 'white';
   if (duration < 500) {
     color = 'green';
   } else if (duration < 1000) {
@@ -32,11 +32,11 @@ function colorDuration(duration) {
   } else {
     color = 'red';
   }
-  return (0, _stringJust.ljust)(`${ duration } ms`, '10000.00 ms'.length)[color];
+  return (0, _stringJust.ljust)(duration + ' ms', '10000.00 ms'.length)[color];
 }
 
 function colorMethod(method) {
-  let colormap = {
+  var colormap = {
     GET: 'green',
     POST: 'yellow',
     PUT: 'yellow',
@@ -45,22 +45,22 @@ function colorMethod(method) {
     OPTIONS: 'cyan',
     HEAD: 'white'
   };
-  return `${ (0, _stringJust.ljust)(method, 'OPTIONS'.length) }`[colormap[method]];
+  return ('' + (0, _stringJust.ljust)(method, 'OPTIONS'.length))[colormap[method]];
 }
 
 function colorUrl(url) {
-  return `${ url }`['white'];
+  return ('' + url)['white'];
 }
 
-const jsonApionifyLogger = exports.jsonApionifyLogger = request => {
-  let method = request.method;
-  let url = request.url;
+var jsonApionifyLogger = exports.jsonApionifyLogger = function jsonApionifyLogger(request) {
+  var method = request.method;
+  var url = request.url;
 
-  let start = new Date();
-  return response => {
-    let status = response.status;
+  var start = new Date();
+  return function (response) {
+    var status = response.status;
 
-    let duration = (new Date() - start).toFixed(2);
+    var duration = (new Date() - start).toFixed(2);
     global.console.log([(0, _stringJust.ljust)('JSONAPI', 10), '|', colorMethod(method), '>', colorStatus(status), '|', colorDuration(duration), '|', colorUrl(url)].join(' '));
     return response;
   };

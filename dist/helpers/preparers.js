@@ -5,19 +5,19 @@ var _errors = require('../errors');
 // Prep Instance Data
 function prepareInstanceRequestBodyFor(instance, verb) {
   return instance.options().then(function (_ref) {
-    let json = _ref.json;
+    var json = _ref.json;
 
-    let attributes = {};
+    var attributes = {};
     if (json.meta.requests[verb] === undefined) {
-      throw new _errors.VerbUnsupportedError(`'${ instance.uri() }' does not support '${ verb }'`);
+      throw new _errors.VerbUnsupportedError('\'' + instance.uri() + '\' does not support \'' + verb + '\'');
     }
     json.meta.requests[verb].request_attributes.forEach(function (attribute) {
       attributes[attribute.name] = instance.attributes[attribute.name];
     });
-    let body = {
+    var body = {
       data: {
         type: instance.type,
-        attributes
+        attributes: attributes
       }
     };
     if (instance.id) {
@@ -28,37 +28,37 @@ function prepareInstanceRequestBodyFor(instance, verb) {
 }
 
 function getRelationshipData(instance, name) {
-  let error = new _errors.InvalidRelationshipError(`${ name } is not a valid relationship`);
-  let api = instance.api;
-  let relationships = instance.relationships;
+  var error = new _errors.InvalidRelationshipError(name + ' is not a valid relationship');
+  var api = instance.api;
+  var relationships = instance.relationships;
 
   if (instance.relationships === undefined) {
-    const fields = {};
+    var fields = {};
     fields[instance.type] = name;
-    return instance.reload({ fields }).then(function (_ref2) {
-      let reloadedInstance = _ref2.instance;
+    return instance.reload({ fields: fields }).then(function (_ref2) {
+      var reloadedInstance = _ref2.instance;
 
-      let data = reloadedInstance.relationships[name];
+      var data = reloadedInstance.relationships[name];
       if (data === undefined) {
         throw error;
       }
       return {
-        data,
-        api
+        data: data,
+        api: api
       };
     });
   }
-  let data = relationships[name];
+  var data = relationships[name];
   if (data === undefined) {
     throw error;
   }
   return Promise.resolve({
-    data,
-    api
+    data: data,
+    api: api
   });
 }
 
 module.exports = {
-  prepareInstanceRequestBodyFor,
-  getRelationshipData
+  prepareInstanceRequestBodyFor: prepareInstanceRequestBodyFor,
+  getRelationshipData: getRelationshipData
 };

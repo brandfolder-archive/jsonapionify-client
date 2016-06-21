@@ -3,7 +3,7 @@
 import _ from 'lodash';
 import stackTrace from 'stack-trace'
 
-import { JSONAPIonify, jsonApionifyLogger } from '../src/index.js'
+import { JSONAPIonify, jsonApionifyLogger } from '../dist/index.js'
 
 function logError(error) {
   console.error('');

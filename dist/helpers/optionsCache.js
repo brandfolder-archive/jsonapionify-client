@@ -3,17 +3,19 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-const optsCache = {};
+var optsCache = {};
 
 function optionsCache(fn) {
+  var _this = this;
+
   for (var _len = arguments.length, additions = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
     additions[_key - 1] = arguments[_key];
   }
 
-  let expiresIn = 30000;
-  let key = this.optionsCacheKey(...additions);
-  let time = new Date();
-  let promise;
+  var expiresIn = 30000;
+  var key = this.optionsCacheKey.apply(this, additions);
+  var time = new Date();
+  var promise = void 0;
 
   // Cache Hit
   if (optsCache[key] && time - optsCache[key].time < expiresIn) {
@@ -22,24 +24,26 @@ function optionsCache(fn) {
     // Cache Miss
     delete optsCache[key];
     promise = fn();
-    let retrys = 0;
-    optsCache[key] = { promise, time, retrys };
+    var retrys = 0;
+    optsCache[key] = { promise: promise, time: time, retrys: retrys };
   }
 
-  return promise.catch(reason => {
+  return promise.catch(function (reason) {
     if (optsCache[key]) {
       if (optsCache[key].retrys++ > 3) {
         delete optsCache[key];
         throw reason;
       }
-      return optionsCache.bind(this)(fn, ...additions);
+      return optionsCache.bind(_this).apply(undefined, [fn].concat(additions));
     }
     throw reason;
   });
 }
 
 function clearOptionsCache() {
-  Object.keys(optsCache).forEach(key => delete optsCache[key]);
+  Object.keys(optsCache).forEach(function (key) {
+    return delete optsCache[key];
+  });
 }
 
 exports.optionsCache = optionsCache;

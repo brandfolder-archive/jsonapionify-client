@@ -13,10 +13,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function reloadInstance(instance, params) {
   var _require = require('./builders');
 
-  let buildInstanceWithResponse = _require.buildInstanceWithResponse;
+  var buildInstanceWithResponse = _require.buildInstanceWithResponse;
 
-  let uri = instance.uri();
-  let collectionUri = instance.collection && instance.collection.uri();
+  var uri = instance.uri();
+  var collectionUri = instance.collection && instance.collection.uri();
   if (uri === undefined || uri === collectionUri || instance.id === undefined) {
     return Promise.reject(new _errors.NotPersistedError('Instance is not persisted'));
   }
@@ -31,7 +31,7 @@ function reloadInstance(instance, params) {
 function deleteInstance(instance, params) {
   var _require2 = require('./builders');
 
-  let buildDeletedInstanceWithResponse = _require2.buildDeletedInstanceWithResponse;
+  var buildDeletedInstanceWithResponse = _require2.buildDeletedInstanceWithResponse;
 
   return instance.api.client.delete(instance.links.self, params).then(buildDeletedInstanceWithResponse.bind(undefined, instance));
 }
@@ -39,7 +39,7 @@ function deleteInstance(instance, params) {
 function patchInstance(instance, params) {
   var _require3 = require('./builders');
 
-  let buildInstanceWithResponse = _require3.buildInstanceWithResponse;
+  var buildInstanceWithResponse = _require3.buildInstanceWithResponse;
 
   return (0, _preparers.prepareInstanceRequestBodyFor)(instance, 'PATCH').then(function (body) {
     return instance.api.client.patch(instance.uri(), body, params).then(_processResponse2.default).then(buildInstanceWithResponse.bind(undefined, instance));
@@ -49,7 +49,7 @@ function patchInstance(instance, params) {
 function postInstance(instance, params) {
   var _require4 = require('./builders');
 
-  let buildInstanceWithResponse = _require4.buildInstanceWithResponse;
+  var buildInstanceWithResponse = _require4.buildInstanceWithResponse;
 
   return (0, _preparers.prepareInstanceRequestBodyFor)(instance, 'POST').then(function (body) {
     return instance.api.client.post(instance.uri(), body, params).then(_processResponse2.default).then(buildInstanceWithResponse.bind(undefined, instance));
@@ -57,8 +57,8 @@ function postInstance(instance, params) {
 }
 
 module.exports = {
-  deleteInstance,
-  patchInstance,
-  postInstance,
-  reloadInstance
+  deleteInstance: deleteInstance,
+  patchInstance: patchInstance,
+  postInstance: postInstance,
+  reloadInstance: reloadInstance
 };
