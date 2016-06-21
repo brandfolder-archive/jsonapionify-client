@@ -3,9 +3,9 @@ import path from 'path';
 import processResponse from '../helpers/processResponse.js';
 import Collection from './Collection.js';
 import Instance from './Instance.js';
+import RelatedProxy from './RelatedProxy';
+import RelationshipProxy from './RelationshipProxy';
 import {
-  buildOneOrManyRelationship,
-  buildCollectionOrInstance,
   buildCollectionWithResponse
 } from '../helpers/builders';
 import { optionsCache } from '../helpers/optionsCache';
@@ -36,22 +36,15 @@ module.exports = class Resource {
   }
 
   relatedForId(id, name, params) {
-    let parentInstance = this.new({ id });
-    return this.api.client.get(`${this.type}/${id}/${name}`, params).then(
-      processResponse
-    ).then(
-      response => buildCollectionOrInstance(parentInstance, name, response)
-    );
+    const parentInstance = this.new({ id });
+    const url = `${this.type}/${id}/${name}`;
+    return new RelatedProxy(parentInstance, name, params, url);
   }
 
   relationshipForId(id, name, params) {
-    return this.api.client.get(
-      `${this.type}/${id}/relationships/${name}`, params
-    ).then(
-      processResponse
-    ).then(
-      buildOneOrManyRelationship.bind(undefined, this)
-    );
+    const parentInstance = this.new({ id });
+    const url = `${this.type}/${id}/relationships/${name}`;
+    return new RelationshipProxy(parentInstance, name, params, url);
   }
 
   create(instanceData, params) {

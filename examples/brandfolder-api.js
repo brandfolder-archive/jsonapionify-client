@@ -70,13 +70,13 @@ api.resource('organizations').list().then(function({collection: organizations}) 
   });
 }).then(function({instance: section}) { // Get the "assets" relation
   console.log('load assets');
-  return section.related('assets');
-}).then(function({collection: assets}) { // Create Some Assets
+  const assets = section.related('assets');
   console.log('create assets');
   return Promise.all(_.times(3, function(i) {
     let count = i + 1;
     console.log('create asset');
     return assets.create({
+      type: 'assets',
       attributes: {
         name: `Cat ${count}`
       }
@@ -106,7 +106,7 @@ api.resource('organizations').list().then(function({collection: organizations}) 
       return attachment;
     });
   })).then(function() {
-    return assets.reload();
+    return assets
   });
 }).then(function({collection: assets}) {
   console.log('load first asset\'s brandfolder');

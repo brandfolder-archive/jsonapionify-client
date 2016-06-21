@@ -83,14 +83,8 @@ class Instance extends ResourceIdentifier {
 
   // Fetches the related collection or instance
   related(name, params) {
-    const { buildCollectionOrInstance } = require('../helpers/builders');
-    return getRelationshipData(this, name).then(function ({ data, api }) {
-      return api.client.get(data.links.related, params);
-    }).then(
-      processResponse
-    ).then(
-      response => buildCollectionOrInstance(this, name, response)
-    );
+    const RelatedProxy = require('./RelatedProxy').default;
+    return new RelatedProxy(this, name, params);
   }
 
   // Gets options about the relation
@@ -106,14 +100,8 @@ class Instance extends ResourceIdentifier {
 
   // Fetches the relationship
   relationship(name, params) {
-    const { buildOneOrManyRelationship } = require('../helpers/builders');
-    return getRelationshipData(this, name).then(function ({ data, api }) {
-      return api.client.get(data.links.self, params);
-    }).then(
-      processResponse
-    ).then(
-      buildOneOrManyRelationship.bind(undefined, this)
-    );
+    const RelationshipProxy = require('./RelationshipProxy').default;
+    return new RelationshipProxy(this, name, params);
   }
 
   // Reloads the instance, returns a new instance object with the reloaded data

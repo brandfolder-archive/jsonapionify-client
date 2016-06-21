@@ -90,7 +90,7 @@ function buildRelatedCollectionWithResponse(parent, relName, responseObj) {
   });
 }
 
-function buildCollectionWithResponse({ api, type } , { json, response }) {
+function buildCollectionWithResponse({ api, type }, { json, response }) {
   let collection;
   let uri = response.url;
   let Collection = require('../classes/Collection.js');
