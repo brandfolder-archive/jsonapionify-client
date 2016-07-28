@@ -45,7 +45,7 @@ function colorUrl(url) {
   return `${ url }`['white'];
 }
 
-export const jsonApionifyLogger = request => {
+export default request => {
   let { method, url } = request;
   let start = new Date();
   return response => {

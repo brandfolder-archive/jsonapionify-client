@@ -1,0 +1,27 @@
+{
+  "name": "jsonapionify-client",
+  "description": "A JSONAPI client application for the browser.",
+  "license": "MIT",
+  "authors": "Brandfolder, Inc. <developers@brandfolder.com>",
+  "keywords": [
+    "jsonapi",
+    "json",
+    "api",
+    "client"
+  ],
+  "main": "browser/jsonapionify-client.js",
+  "ignore": [
+    "examples",
+    "node_modules",
+    "bower_components",
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "prepublish": "npm run build",
+    "build-npm": "rm -rf dist/* && babel src --ignore __tests__ --out-dir dist",
+    "build-browser": "mkdir -p ./browser && browserify -t [ babelify ] ./src/index.js -o ./browser/jsonapionify-client.js && uglifyjs ./browser/jsonapionify-client.js -o ./browser/jsonapionify-client.min.js",
+    "build": "npm run build-npm && npm run build-browser",
+    "lint": "eslint ."
+  }
+}

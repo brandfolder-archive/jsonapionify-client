@@ -1,11 +1,16 @@
 'use strict';
 
-import Client from './classes/Client.js';
-import Resource from './classes/Resource.js';
+import Client from './classes/Client';
+import Resource from './classes/Resource';
+import Logger from './logger';
+import * as Errors from './errors';
 
 require('colors');
 
-export class JSONAPIonify {
+export default class JSONAPIonify {
+  static Logger = Logger
+  static Errors = Errors
+
   constructor(baseUrl, ClientOptions) {
     this.url = baseUrl;
     this.client = new Client(baseUrl, ClientOptions);
@@ -19,6 +24,3 @@ export class JSONAPIonify {
     return this.client.addMiddleware(...args);
   }
 }
-
-export { jsonApionifyLogger } from './logger';
-export * from './errors';

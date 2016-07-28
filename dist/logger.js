@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.jsonApionifyLogger = undefined;
 
 var _stringJust = require('string-just');
 
@@ -52,7 +51,7 @@ function colorUrl(url) {
   return ('' + url)['white'];
 }
 
-var jsonApionifyLogger = exports.jsonApionifyLogger = function jsonApionifyLogger(request) {
+exports.default = function (request) {
   var method = request.method;
   var url = request.url;
 
