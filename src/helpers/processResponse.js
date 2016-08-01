@@ -14,5 +14,4 @@ function processResponse(response) {
   });
 }
 
-
 export default processResponse;

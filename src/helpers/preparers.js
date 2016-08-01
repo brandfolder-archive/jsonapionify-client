@@ -4,20 +4,38 @@ import { VerbUnsupportedError, InvalidRelationshipError } from '../errors';
 function prepareInstanceRequestBodyFor(instance, verb) {
   return instance.options().then(function ({ json }) {
     let attributes = {};
+    let relationships = {};
+
     if (json.meta.requests[verb] === undefined) {
       throw new VerbUnsupportedError(
         `'${instance.uri()}' does not support '${verb}'`
       );
     }
-    json.meta.requests[verb].request_attributes.forEach(function (attribute) {
-      attributes[attribute.name] = instance.attributes[attribute.name];
-    });
-    let body = {
-      data: {
-        type: instance.type,
-        attributes
+
+    json.meta.requests[verb].request_attributes.forEach(function (attr) {
+      const value = instance.attributes[attr.name];
+      if (value) {
+        attributes[attr.name] = instance.attributes[attr.name];
       }
-    };
+    });
+
+    json.meta.requests[verb].relationships.forEach(function (rel) {
+      const value = instance.relationships[rel.name];
+      if (value) {
+        relationships[rel.name] = instance.relationships[rel.name];
+      }
+    });
+
+    let body = { data: {} };
+
+    if (Object.keys(attributes)) {
+      body.data.attributes = attributes;
+    }
+
+    if (Object.keys(attributes)) {
+      body.data.relationships = relationships;
+    }
+
     if (instance.id) {
       body.data.id = instance.id;
     }

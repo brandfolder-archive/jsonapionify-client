@@ -8,18 +8,36 @@ function prepareInstanceRequestBodyFor(instance, verb) {
     var json = _ref.json;
 
     var attributes = {};
+    var relationships = {};
+
     if (json.meta.requests[verb] === undefined) {
       throw new _errors.VerbUnsupportedError('\'' + instance.uri() + '\' does not support \'' + verb + '\'');
     }
-    json.meta.requests[verb].request_attributes.forEach(function (attribute) {
-      attributes[attribute.name] = instance.attributes[attribute.name];
-    });
-    var body = {
-      data: {
-        type: instance.type,
-        attributes: attributes
+
+    json.meta.requests[verb].request_attributes.forEach(function (attr) {
+      var value = instance.attributes[attr.name];
+      if (value) {
+        attributes[attr.name] = instance.attributes[attr.name];
       }
-    };
+    });
+
+    json.meta.requests[verb].relationships.forEach(function (rel) {
+      var value = instance.relationships[rel.name];
+      if (value) {
+        relationships[rel.name] = instance.relationships[rel.name];
+      }
+    });
+
+    var body = { data: {} };
+
+    if (Object.keys(attributes)) {
+      body.data.attributes = attributes;
+    }
+
+    if (Object.keys(attributes)) {
+      body.data.relationships = relationships;
+    }
+
     if (instance.id) {
       body.data.id = instance.id;
     }
