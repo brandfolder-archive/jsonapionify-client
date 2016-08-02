@@ -2,7 +2,7 @@ import { VerbUnsupportedError, InvalidRelationshipError } from '../errors';
 
 // Prep Instance Data
 function prepareInstanceRequestBodyFor(instance, verb) {
-  return instance.options().then(function ({ json }) {
+  return instance.options().then(({ json }) => {
     let attributes = {};
     let relationships = {};
 
@@ -13,7 +13,7 @@ function prepareInstanceRequestBodyFor(instance, verb) {
     }
 
     if (instance.attributes) {
-      json.meta.requests[verb].request_attributes.forEach(function (attr) {
+      json.meta.requests[verb].request_attributes.forEach(attr => {
         const value = instance.attributes[attr.name];
         if (value) {
           attributes[attr.name] = instance.attributes[attr.name];
@@ -22,7 +22,7 @@ function prepareInstanceRequestBodyFor(instance, verb) {
     }
 
     if (instance.relationships) {
-      json.meta.requests[verb].relationships.forEach(function (rel) {
+      json.meta.requests[verb].relationships.forEach(rel => {
         const value = instance.relationships[rel.name];
         if (value) {
           relationships[rel.name] = instance.relationships[rel.name];

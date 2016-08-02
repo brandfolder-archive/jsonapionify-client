@@ -186,14 +186,25 @@ var Instance = function (_ResourceIdentifier) {
         throw error;
       });
     }
+  }, {
+    key: 'update',
+    value: function update(_ref3, params) {
+      var attributes = _ref3.attributes;
+      var relationships = _ref3.relationships;
+
+      return this.write({ attributes: attributes, relationships: relationships }).then(function (_ref4) {
+        var instance = _ref4.instance;
+        return instance.save(params);
+      });
+    }
 
     // Updates and returns a new instance object with the updated attributes
 
   }, {
     key: 'updateAttributes',
     value: function updateAttributes(attributes, params) {
-      return this.writeAttributes(attributes).then(function (_ref3) {
-        var instance = _ref3.instance;
+      return this.write({ attributes: attributes }).then(function (_ref5) {
+        var instance = _ref5.instance;
 
         return instance.save(params);
       });
@@ -218,22 +229,43 @@ var Instance = function (_ResourceIdentifier) {
     // attributes
 
   }, {
-    key: 'writeAttributes',
-    value: function writeAttributes(attributes) {
+    key: 'write',
+    value: function write(_ref6) {
+      var _this4 = this;
+
+      var attributes = _ref6.attributes;
+      var relationships = _ref6.relationships;
+
       var _require = require('../helpers/builders');
 
-      var buildInstanceWithAttributes = _require.buildInstanceWithAttributes;
+      var buildInstance = _require.buildInstance;
 
       var newAttributes = {};
+      var newRelationships = {};
       var keys = Object.keys(this.attributes).concat(Object.keys(attributes));
       keys.forEach(function (key) {
         if (attributes[key] !== undefined) {
           newAttributes[key] = attributes[key];
         } else {
-          newAttributes[key] = this.attributes[key];
+          newAttributes[key] = _this4.attributes[key];
         }
       }, this);
-      return buildInstanceWithAttributes(this, newAttributes);
+
+      if (this.relationships) {
+        keys.forEach(function (key) {
+          if (attributes[key] !== undefined) {
+            newAttributes[key] = attributes[key];
+          } else {
+            newAttributes[key] = _this4.attributes[key];
+          }
+        }, this);
+      } else {
+        newRelationships = relationships;
+      }
+      return buildInstance(this, {
+        attributes: newAttributes,
+        relationships: newRelationships
+      });
     }
   }, {
     key: 'peristed',

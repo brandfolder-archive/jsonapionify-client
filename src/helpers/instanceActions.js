@@ -11,7 +11,7 @@ function reloadInstance(instance, params) {
   }
   return instance.api.client.get(uri, params).then(processResponse).then(
     buildInstanceWithResponse.bind(undefined, instance)
-  ).catch(function (error) {
+  ).catch(error => {
     if (error.hasStatus instanceof Function && error.hasStatus(404)) {
       return Promise.reject(new NotPersistedError('Instance is not persisted'));
     }
@@ -28,7 +28,7 @@ function deleteInstance(instance, params) {
 
 function patchInstance(instance, params) {
   let { buildInstanceWithResponse } = require('./builders');
-  return prepareInstanceRequestBodyFor(instance, 'PATCH').then(function (body) {
+  return prepareInstanceRequestBodyFor(instance, 'PATCH').then(body => {
     return instance.api.client.patch(instance.uri(), body, params).then(
       processResponse
     ).then(
@@ -39,7 +39,7 @@ function patchInstance(instance, params) {
 
 function postInstance(instance, params) {
   let { buildInstanceWithResponse } = require('./builders');
-  return prepareInstanceRequestBodyFor(instance, 'POST').then(function (body) {
+  return prepareInstanceRequestBodyFor(instance, 'POST').then(body => {
     return instance.api.client.post(instance.uri(), body, params).then(
       processResponse
     ).then(

@@ -15,7 +15,7 @@ class Collection extends Array {
 
     this.links = Object.freeze(links || {});
     this.meta = Object.freeze(meta || {});
-    (data || []).forEach(function (instanceData) {
+    (data || []).forEach(instanceData => {
       this.push(new Instance(instanceData, api, this));
     }, this);
 
@@ -48,10 +48,10 @@ class Collection extends Array {
   deleteAll(params) {
     let { api, links, meta, defaultResource } = this;
     return Promise.all(
-      this.map(function (instance) {
+      this.map(instance => {
         return instance.delete(params);
       })
-    ).then(function (responses) {
+    ).then(responses => {
       let collection = new Collection({
         data: [],
         links,

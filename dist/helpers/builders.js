@@ -143,33 +143,28 @@ function buildCollectionWithResponse(_ref8, _ref9) {
   });
 }
 
-function buildInstanceWithAttributes(_ref11, attributes) {
-  var type = _ref11.type;
-  var id = _ref11.id;
-  var relationships = _ref11.relationships;
-  var links = _ref11.links;
-  var meta = _ref11.meta;
-  var api = _ref11.api;
+function buildInstance() {
+  var oldOptions = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var newOptions = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
   var Instance = require('../classes/Instance.js');
   var instance = new Instance({
-    type: type,
-    id: id,
-    links: links,
-    meta: meta,
-    relationships: relationships,
-    attributes: attributes
-  }, api);
+    type: newOptions.type || oldOptions.type,
+    id: newOptions.id || oldOptions.id,
+    links: newOptions.links || oldOptions.links,
+    meta: newOptions.meta || oldOptions.meta,
+    relationships: newOptions.relationships || oldOptions.relationships,
+    attributes: newOptions.attributes || oldOptions.attributes
+  }, oldOptions.api);
   return Promise.resolve({
-    instance: instance,
-    attributes: attributes
+    instance: instance
   });
 }
 
 module.exports = {
   buildCollectionOrInstance: buildCollectionOrInstance,
   buildOneOrManyRelationship: buildOneOrManyRelationship,
-  buildInstanceWithAttributes: buildInstanceWithAttributes,
+  buildInstance: buildInstance,
   buildDeletedInstanceWithResponse: buildDeletedInstanceWithResponse,
   buildInstanceWithResponse: buildInstanceWithResponse,
   buildCollectionWithResponse: buildCollectionWithResponse

@@ -90,7 +90,7 @@ var ManyRelationship = function (_extendableBuiltin2) {
     _this.links = Object.freeze(links);
     _this.meta = Object.freeze(meta);
     _this.concat((data || []).map(function (d) {
-      return new _ResourceIdentifier2.default(d, this.api);
+      return new _ResourceIdentifier2.default(d, _this.api);
     }, _this));
     Object.freeze(_this);
     return _this;

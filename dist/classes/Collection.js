@@ -70,7 +70,7 @@ var Collection = function (_extendableBuiltin2) {
     _this.links = Object.freeze(links || {});
     _this.meta = Object.freeze(meta || {});
     (data || []).forEach(function (instanceData) {
-      this.push(new _Instance2.default(instanceData, api, this));
+      _this.push(new _Instance2.default(instanceData, api, _this));
     }, _this);
 
     if (_this.constructor === Collection) {

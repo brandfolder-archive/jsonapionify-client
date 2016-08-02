@@ -5,7 +5,7 @@ function itemsToResourceIdentifiers(resourceIdentifiers) {
   if (!(resourceIdentifiers instanceof Array)) {
     resourceIdentifiers = [ resourceIdentifiers ];
   }
-  return resourceIdentifiers.map(function ({ type, id }) {
+  return resourceIdentifiers.map(({ type, id }) => {
     return {
       type,
       id
@@ -16,7 +16,7 @@ function itemsToResourceIdentifiers(resourceIdentifiers) {
 function modifyRelationship({ api, links } , items, action, params) {
   return api.client[action](links.self, {
     data: itemsToResourceIdentifiers(items)
-  }, params).then(processResponse).then(function (response) {
+  }, params).then(processResponse).then(response => {
     let relationship = new ManyRelationship({
       api
     }, response);
@@ -33,7 +33,7 @@ class ManyRelationship extends Array {
     this.api = api;
     this.links = Object.freeze(links);
     this.meta = Object.freeze(meta);
-    this.concat((data || []).map(function (d) {
+    this.concat((data || []).map(d => {
       return new ResourceIdentifier(d, this.api);
     }, this));
     Object.freeze(this);

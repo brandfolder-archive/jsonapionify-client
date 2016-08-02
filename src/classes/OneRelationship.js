@@ -15,7 +15,7 @@ module.exports = class OneRelationship extends ResourceIdentifier {
       data: item ? item.resourceIdentifier : null
     }, params).then(
       processResponse
-    ).then(function (response) {
+    ).then(response => {
       let relationship = new OneRelationship(relationship, response);
       return {
         relationship,

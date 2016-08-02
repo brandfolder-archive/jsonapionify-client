@@ -40,7 +40,7 @@ function buildOneOrManyRelationship({ api }, response) {
 
 function buildEmptyInstanceWithResponse({ api, links }, response) {
   let Instance = require('../classes/Instance.js');
-  return api.client.options(links.self).then(function ({ json: optionsJson }) {
+  return api.client.options(links.self).then(({ json: optionsJson }) => {
     return new Instance({
       type: optionsJson.meta.type,
       links: {
@@ -80,7 +80,7 @@ function buildInstanceWithResponse({ collection, api } , { json, response }) {
 function buildRelatedCollectionWithResponse(parent, relName, responseObj) {
   let { json, response } = responseObj;
   let RelatedCollection = require('../classes/RelatedCollection.js');
-  return parent.relatedOptions(relName).then(function ({ json: optsJson }) {
+  return parent.relatedOptions(relName).then(({ json: optsJson }) => {
     let defResource = parent.api.resource(optsJson.meta.type);
     let collection = new RelatedCollection(json, parent, relName, defResource);
     return {
@@ -101,7 +101,7 @@ function buildCollectionWithResponse({ api, type }, { json, response }) {
       response
     };
   }
-  return api.client.options(uri).then(function ({ json: optionsJson }) {
+  return api.client.options(uri).then(({ json: optionsJson }) => {
     let defaultResource = api.resource(optionsJson.meta.type);
     collection = new Collection(json, api, defaultResource);
     return {
@@ -111,28 +111,25 @@ function buildCollectionWithResponse({ api, type }, { json, response }) {
   });
 }
 
-function buildInstanceWithAttributes(
-  { type, id, relationships, links, meta, api } , attributes
-) {
+function buildInstance(oldOptions = {}, newOptions = {}) {
   let Instance = require('../classes/Instance.js');
   let instance = new Instance({
-    type,
-    id,
-    links,
-    meta,
-    relationships,
-    attributes
-  }, api);
+    type: newOptions.type || oldOptions.type,
+    id: newOptions.id || oldOptions.id,
+    links: newOptions.links || oldOptions.links,
+    meta: newOptions.meta || oldOptions.meta,
+    relationships: newOptions.relationships || oldOptions.relationships,
+    attributes: newOptions.attributes || oldOptions.attributes
+  }, oldOptions.api);
   return Promise.resolve({
-    instance,
-    attributes
+    instance
   });
 }
 
 module.exports = {
   buildCollectionOrInstance,
   buildOneOrManyRelationship,
-  buildInstanceWithAttributes,
+  buildInstance,
   buildDeletedInstanceWithResponse,
   buildInstanceWithResponse,
   buildCollectionWithResponse

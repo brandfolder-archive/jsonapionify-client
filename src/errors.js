@@ -15,7 +15,7 @@ export class CompositeError extends Error {
   }
 
   get message() {
-    return this.errors.map(function (error) {
+    return this.errors.map(error => {
       let msg = '';
       if (error.status) {
         msg += error.status;

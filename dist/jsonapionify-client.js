@@ -19804,7 +19804,7 @@ var Collection = function (_extendableBuiltin2) {
     _this.links = Object.freeze(links || {});
     _this.meta = Object.freeze(meta || {});
     (data || []).forEach(function (instanceData) {
-      this.push(new _Instance2.default(instanceData, api, this));
+      _this.push(new _Instance2.default(instanceData, api, _this));
     }, _this);
 
     if (_this.constructor === Collection) {
@@ -20140,14 +20140,25 @@ var Instance = function (_ResourceIdentifier) {
         throw error;
       });
     }
+  }, {
+    key: 'update',
+    value: function update(_ref3, params) {
+      var attributes = _ref3.attributes;
+      var relationships = _ref3.relationships;
+
+      return this.write({ attributes: attributes, relationships: relationships }).then(function (_ref4) {
+        var instance = _ref4.instance;
+        return instance.save(params);
+      });
+    }
 
     // Updates and returns a new instance object with the updated attributes
 
   }, {
     key: 'updateAttributes',
     value: function updateAttributes(attributes, params) {
-      return this.writeAttributes(attributes).then(function (_ref3) {
-        var instance = _ref3.instance;
+      return this.write({ attributes: attributes }).then(function (_ref5) {
+        var instance = _ref5.instance;
 
         return instance.save(params);
       });
@@ -20172,22 +20183,43 @@ var Instance = function (_ResourceIdentifier) {
     // attributes
 
   }, {
-    key: 'writeAttributes',
-    value: function writeAttributes(attributes) {
+    key: 'write',
+    value: function write(_ref6) {
+      var _this4 = this;
+
+      var attributes = _ref6.attributes;
+      var relationships = _ref6.relationships;
+
       var _require = require('../helpers/builders');
 
-      var buildInstanceWithAttributes = _require.buildInstanceWithAttributes;
+      var buildInstance = _require.buildInstance;
 
       var newAttributes = {};
+      var newRelationships = {};
       var keys = Object.keys(this.attributes).concat(Object.keys(attributes));
       keys.forEach(function (key) {
         if (attributes[key] !== undefined) {
           newAttributes[key] = attributes[key];
         } else {
-          newAttributes[key] = this.attributes[key];
+          newAttributes[key] = _this4.attributes[key];
         }
       }, this);
-      return buildInstanceWithAttributes(this, newAttributes);
+
+      if (this.relationships) {
+        keys.forEach(function (key) {
+          if (attributes[key] !== undefined) {
+            newAttributes[key] = attributes[key];
+          } else {
+            newAttributes[key] = _this4.attributes[key];
+          }
+        }, this);
+      } else {
+        newRelationships = relationships;
+      }
+      return buildInstance(this, {
+        attributes: newAttributes,
+        relationships: newRelationships
+      });
     }
   }, {
     key: 'peristed',
@@ -20299,7 +20331,7 @@ var ManyRelationship = function (_extendableBuiltin2) {
     _this.links = Object.freeze(links);
     _this.meta = Object.freeze(meta);
     _this.concat((data || []).map(function (d) {
-      return new _ResourceIdentifier2.default(d, this.api);
+      return new _ResourceIdentifier2.default(d, _this.api);
     }, _this));
     Object.freeze(_this);
     return _this;
@@ -21450,33 +21482,28 @@ function buildCollectionWithResponse(_ref8, _ref9) {
   });
 }
 
-function buildInstanceWithAttributes(_ref11, attributes) {
-  var type = _ref11.type;
-  var id = _ref11.id;
-  var relationships = _ref11.relationships;
-  var links = _ref11.links;
-  var meta = _ref11.meta;
-  var api = _ref11.api;
+function buildInstance() {
+  var oldOptions = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var newOptions = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
   var Instance = require('../classes/Instance.js');
   var instance = new Instance({
-    type: type,
-    id: id,
-    links: links,
-    meta: meta,
-    relationships: relationships,
-    attributes: attributes
-  }, api);
+    type: newOptions.type || oldOptions.type,
+    id: newOptions.id || oldOptions.id,
+    links: newOptions.links || oldOptions.links,
+    meta: newOptions.meta || oldOptions.meta,
+    relationships: newOptions.relationships || oldOptions.relationships,
+    attributes: newOptions.attributes || oldOptions.attributes
+  }, oldOptions.api);
   return Promise.resolve({
-    instance: instance,
-    attributes: attributes
+    instance: instance
   });
 }
 
 module.exports = {
   buildCollectionOrInstance: buildCollectionOrInstance,
   buildOneOrManyRelationship: buildOneOrManyRelationship,
-  buildInstanceWithAttributes: buildInstanceWithAttributes,
+  buildInstance: buildInstance,
   buildDeletedInstanceWithResponse: buildDeletedInstanceWithResponse,
   buildInstanceWithResponse: buildInstanceWithResponse,
   buildCollectionWithResponse: buildCollectionWithResponse

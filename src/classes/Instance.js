@@ -39,7 +39,7 @@ class Instance extends ResourceIdentifier {
     if (this.persisted) {
       return Promise.resolve(instance);
     }
-    return this.reload(params).then(function () {
+    return this.reload(params).then(() => {
       return instance;
     });
   }
@@ -90,7 +90,7 @@ class Instance extends ResourceIdentifier {
   // Gets options about the relation
   relatedOptions(name) {
     return this.optionsCache(() => {
-      return getRelationshipData(this, name).then(function ({ data, api }) {
+      return getRelationshipData(this, name).then(({ data, api }) => {
         return api.client.options(data.links.related);
       }).then(
         processResponse
@@ -112,9 +112,9 @@ class Instance extends ResourceIdentifier {
   // Saves the instance, returns a new object with the saved data.
   save(params) {
     let instance = this;
-    return this.checkPersistence().then(function () {
+    return this.checkPersistence().then(() => {
       return patchInstance(instance, params);
-    }).catch(function (error) { // Create the instance
+    }).catch(error => { // Create the instance
       if (error instanceof NotPersistedError) {
         return postInstance(instance, params);
       }
@@ -122,9 +122,17 @@ class Instance extends ResourceIdentifier {
     });
   }
 
+  update({ attributes, relationships }, params) {
+    return this.write(
+      { attributes, relationships }
+    ).then(
+      ({ instance }) => instance.save(params)
+    );
+  }
+
   // Updates and returns a new instance object with the updated attributes
   updateAttributes(attributes, params) {
-    return this.writeAttributes(attributes).then(function ({ instance }) {
+    return this.write({ attributes }).then(({ instance }) => {
       return instance.save(params);
     });
   }
@@ -143,18 +151,34 @@ class Instance extends ResourceIdentifier {
 
   // Writes the new attributes, returns an instance with the newly written
   // attributes
-  writeAttributes(attributes) {
-    const { buildInstanceWithAttributes } = require('../helpers/builders');
+  write({ attributes, relationships }) {
+    const { buildInstance } = require('../helpers/builders');
     let newAttributes = {};
+    let newRelationships = {};
     let keys = Object.keys(this.attributes).concat(Object.keys(attributes));
-    keys.forEach(function (key) {
+    keys.forEach(key => {
       if (attributes[key] !== undefined) {
         newAttributes[key] = attributes[key];
       } else {
         newAttributes[key] = this.attributes[key];
       }
     }, this);
-    return buildInstanceWithAttributes(this, newAttributes);
+
+    if (this.relationships) {
+      keys.forEach(key => {
+        if (attributes[key] !== undefined) {
+          newAttributes[key] = attributes[key];
+        } else {
+          newAttributes[key] = this.attributes[key];
+        }
+      }, this);
+    } else {
+      newRelationships = relationships;
+    }
+    return buildInstance(this, {
+      attributes: newAttributes,
+      relationships: newRelationships
+    });
   }
 }
 

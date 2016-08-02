@@ -1,7 +1,7 @@
 import { CompositeError } from '../errors';
 
 function processResponse(response) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     let json = response.json;
     if (json.errors) {
       reject(new CompositeError(response));
