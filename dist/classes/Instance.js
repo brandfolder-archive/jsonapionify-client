@@ -62,7 +62,7 @@ var Instance = function (_ResourceIdentifier) {
     _this.attributes = Object.freeze(attributes || {});
     _this.links = Object.freeze(links || {});
     _this.meta = Object.freeze(meta || {});
-    _this.relationships = Object.freeze(relationships);
+    _this.relationships = Object.freeze(relationships || {});
 
     Object.freeze(_this);
     return _this;

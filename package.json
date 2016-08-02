@@ -52,6 +52,8 @@
     "build-browser": "mkdir -p ./dist && browserify -t [ babelify ] ./src/browser.js -o ./dist/jsonapionify-client.js",
     "build-browser-min": "mkdir -p ./dist && browserify -t [ babelify ] ./src/browser.js | uglifyjs -o ./dist/jsonapionify-client.min.js",
     "build": "npm run build-npm && npm run build-browser && npm run build-browser-min",
+    "example-auth": "babel-node ./examples/test-auth.js",
+    "example-api": "babel-node ./examples/brandfolder-api.js",
     "lint": "eslint ."
   }
 }

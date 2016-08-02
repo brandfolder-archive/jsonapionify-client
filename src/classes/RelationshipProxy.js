@@ -52,7 +52,7 @@ class RelationshipProxy {
 
   replace(itemOrArray, ...args) {
     if (itemOrArray instanceof Array) {
-      return this.__invoke(ManyRelationship, 'replace', itemOrArray, ...args);
+      return invoke(ManyRelationship, 'replace', itemOrArray, ...args);
     } else if (itemOrArray instanceof Object) {
       return invoke(this, OneRelationship, 'replace', itemOrArray, ...args);
     }

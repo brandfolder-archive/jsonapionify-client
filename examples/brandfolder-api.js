@@ -3,7 +3,7 @@
 import _ from 'lodash';
 import stackTrace from 'stack-trace'
 
-import { JSONAPIonify, jsonApionifyLogger } from '../dist/index.js'
+import JSONAPIonify from '../dist/index.js'
 
 function logError(error) {
   console.error('');
@@ -27,7 +27,7 @@ if (process.env.BRANDFOLDER_API_KEY) {
 }
 let api = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT, opts);
 
-api.addMiddleware(jsonApionifyLogger)
+api.addMiddleware(JSONAPIonify.Logger)
 
 console.log('loading organizations');
 api.resource('organizations').list().then(function({collection: organizations}) { // Get brandofolders relation

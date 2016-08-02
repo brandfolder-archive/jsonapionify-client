@@ -25,7 +25,7 @@ class Instance extends ResourceIdentifier {
     this.attributes = Object.freeze(attributes || {});
     this.links = Object.freeze(links || {});
     this.meta = Object.freeze(meta || {});
-    this.relationships = Object.freeze(relationships);
+    this.relationships = Object.freeze(relationships || {});
 
     Object.freeze(this);
   }

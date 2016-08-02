@@ -20016,7 +20016,7 @@ var Instance = function (_ResourceIdentifier) {
     _this.attributes = Object.freeze(attributes || {});
     _this.links = Object.freeze(links || {});
     _this.meta = Object.freeze(meta || {});
-    _this.relationships = Object.freeze(relationships);
+    _this.relationships = Object.freeze(relationships || {});
 
     Object.freeze(_this);
     return _this;
@@ -20715,7 +20715,7 @@ var RelationshipProxy = function () {
       }
 
       if (itemOrArray instanceof Array) {
-        return this.__invoke.apply(this, [_ManyRelationship2.default, 'replace', itemOrArray].concat(args));
+        return invoke.apply(undefined, [_ManyRelationship2.default, 'replace', itemOrArray].concat(args));
       } else if (itemOrArray instanceof Object) {
         return invoke.apply(undefined, [this, _OneRelationship2.default, 'replace', itemOrArray].concat(args));
       }
@@ -21665,21 +21665,25 @@ function prepareInstanceRequestBodyFor(instance, verb) {
       throw new _errors.VerbUnsupportedError('\'' + instance.uri() + '\' does not support \'' + verb + '\'');
     }
 
-    json.meta.requests[verb].request_attributes.forEach(function (attr) {
-      var value = instance.attributes[attr.name];
-      if (value) {
-        attributes[attr.name] = instance.attributes[attr.name];
-      }
-    });
+    if (instance.attributes) {
+      json.meta.requests[verb].request_attributes.forEach(function (attr) {
+        var value = instance.attributes[attr.name];
+        if (value) {
+          attributes[attr.name] = instance.attributes[attr.name];
+        }
+      });
+    }
 
-    json.meta.requests[verb].relationships.forEach(function (rel) {
-      var value = instance.relationships[rel.name];
-      if (value) {
-        relationships[rel.name] = instance.relationships[rel.name];
-      }
-    });
+    if (instance.relationships) {
+      json.meta.requests[verb].relationships.forEach(function (rel) {
+        var value = instance.relationships[rel.name];
+        if (value) {
+          relationships[rel.name] = instance.relationships[rel.name];
+        }
+      });
+    }
 
-    var body = { data: {} };
+    var body = { data: { type: instance.type } };
 
     if (Object.keys(attributes)) {
       body.data.attributes = attributes;

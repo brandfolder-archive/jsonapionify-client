@@ -101,7 +101,7 @@ var RelationshipProxy = function () {
       }
 
       if (itemOrArray instanceof Array) {
-        return this.__invoke.apply(this, [_ManyRelationship2.default, 'replace', itemOrArray].concat(args));
+        return invoke.apply(undefined, [_ManyRelationship2.default, 'replace', itemOrArray].concat(args));
       } else if (itemOrArray instanceof Object) {
         return invoke.apply(undefined, [this, _OneRelationship2.default, 'replace', itemOrArray].concat(args));
       }

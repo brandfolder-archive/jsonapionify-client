@@ -4,7 +4,7 @@ import _ from 'lodash';
 import readline from 'readline'
 import stackTrace from 'stack-trace'
 
-import { JSONAPIonify, jsonApionifyLogger } from '../src/index.js'
+import JSONAPIonify from '../dist/index.js'
 
 const api = new JSONAPIonify(process.env.BRANDFOLDER_API_ENDPOINT, {
   allowSetHeaders: true,

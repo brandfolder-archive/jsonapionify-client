@@ -14,21 +14,25 @@ function prepareInstanceRequestBodyFor(instance, verb) {
       throw new _errors.VerbUnsupportedError('\'' + instance.uri() + '\' does not support \'' + verb + '\'');
     }
 
-    json.meta.requests[verb].request_attributes.forEach(function (attr) {
-      var value = instance.attributes[attr.name];
-      if (value) {
-        attributes[attr.name] = instance.attributes[attr.name];
-      }
-    });
+    if (instance.attributes) {
+      json.meta.requests[verb].request_attributes.forEach(function (attr) {
+        var value = instance.attributes[attr.name];
+        if (value) {
+          attributes[attr.name] = instance.attributes[attr.name];
+        }
+      });
+    }
 
-    json.meta.requests[verb].relationships.forEach(function (rel) {
-      var value = instance.relationships[rel.name];
-      if (value) {
-        relationships[rel.name] = instance.relationships[rel.name];
-      }
-    });
+    if (instance.relationships) {
+      json.meta.requests[verb].relationships.forEach(function (rel) {
+        var value = instance.relationships[rel.name];
+        if (value) {
+          relationships[rel.name] = instance.relationships[rel.name];
+        }
+      });
+    }
 
-    var body = { data: {} };
+    var body = { data: { type: instance.type } };
 
     if (Object.keys(attributes)) {
       body.data.attributes = attributes;
