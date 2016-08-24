@@ -32,11 +32,12 @@ class Collection extends Array {
     return this[this.length - 1];
   }
 
-  new({ type, attributes, id }) {
+  new({ type, attributes, relationships, id }) {
     type = type || this.defaultResource.type;
     return new Instance({
       type,
       attributes,
+      relationships,
       id
     }, this.api, this);
   }

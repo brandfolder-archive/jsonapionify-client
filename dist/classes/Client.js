@@ -4,10 +4,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
 var _Request = require('./Request');
 
 var _Request2 = _interopRequireDefault(_Request);
@@ -31,7 +27,7 @@ var Client = function () {
     this.middlewares = [];
     headers = Object.keys(headers).reduce(function (obj, key) {
       var keyName = key.split('-').map(function (part) {
-        return _lodash2.default.upperFirst(part);
+        return part[0].toUpperCase() + part.slice(1, part.length);
       }).join('-');
       obj[keyName] = headers[key];
       return obj;

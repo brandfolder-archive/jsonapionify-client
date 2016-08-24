@@ -94,12 +94,14 @@ var Collection = function (_extendableBuiltin2) {
     value: function _new(_ref2) {
       var type = _ref2.type;
       var attributes = _ref2.attributes;
+      var relationships = _ref2.relationships;
       var id = _ref2.id;
 
       type = type || this.defaultResource.type;
       return new _Instance2.default({
         type: type,
         attributes: attributes,
+        relationships: relationships,
         id: id
       }, this.api, this);
     }

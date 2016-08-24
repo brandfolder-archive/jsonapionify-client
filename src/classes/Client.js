@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import Request from './Request';
 
 class Client {
@@ -7,7 +5,7 @@ class Client {
     // Setup Headers
     this.middlewares = [];
     headers = Object.keys(headers).reduce((obj, key) => {
-      let keyName = key.split('-').map(part => _.upperFirst(part)).join('-');
+      let keyName = key.split('-').map(part => part[0].toUpperCase() + part.slice(1, part.length)).join('-');
       obj[keyName] = headers[key];
       return obj;
     }, {});

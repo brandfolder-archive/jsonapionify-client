@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import path from 'path';
 import url from 'url';
 
@@ -140,7 +139,11 @@ class Instance extends ResourceIdentifier {
   uri(params = false) {
     let selfUri = this.links.self;
     let parentUri = this.collection && this.collection.uri(false);
-    let resourceUri = _.compact([ this.type, this.id ]).join('/');
+    let parts = [this.type]
+    if (this.id) {
+      parts.push(this.id)
+    }
+    let resourceUri = parts.join('/');
     let u = url.parse(selfUri || parentUri || resourceUri);
     if (!params) {
       u.search = undefined;
